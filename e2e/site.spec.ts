@@ -605,7 +605,7 @@ test.describe("compartilhamento", () => {
     expect(image.origin).toBe("https://site-dentarium.vercel.app");
     const res = await request.get(image.pathname + image.search);
     expect(res.status()).toBe(200);
-    expect(image.pathname).toBe("/og/dentarium-compartilhamento-v2.png");
+    expect(image.pathname).toBe("/og/dentarium-compartilhamento-v3.png");
     expect(await meta('name="twitter:image"')).toBe(image.href);
     expect(res.headers()["content-type"]).toBe("image/png");
     expect((await res.body()).length).toBeLessThan(300_000);
