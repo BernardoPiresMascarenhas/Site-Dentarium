@@ -95,7 +95,6 @@ function HeroPortrait() {
         <figcaption className="sr-only">{portrait.caption}</figcaption>
       </figure>
 
-      <Seal />
 
       <div
         className="intro-rise absolute -bottom-7 left-4 max-w-[15rem] rounded-[var(--radius-sm)] bg-paper px-5 py-4 shadow-[0_18px_40px_-24px_rgba(46,48,46,0.45)] sm:-left-8"
@@ -109,32 +108,6 @@ function HeroPortrait() {
           Fundadores da Dentarium
         </p>
       </div>
-    </div>
-  );
-}
-
-/** Selo circular estático com a localização. */
-function Seal() {
-  const text = "Belo Horizonte · Serra · Belo Horizonte · Serra ·";
-  return (
-    <div
-      aria-hidden
-      className="intro-rise absolute -top-8 -left-3 size-[5.75rem] rounded-full bg-ivory/95 backdrop-blur-sm sm:-left-9 sm:size-[6.75rem]"
-      style={{ "--i": 7 } as React.CSSProperties}
-    >
-      <svg viewBox="0 0 120 120" className="seal-spin size-full">
-        <defs>
-          <path id="seal-circle" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0" />
-        </defs>
-        <circle cx="60" cy="60" r="57" fill="none" stroke="var(--taupe-soft)" />
-        <text className="fill-taupe text-[8.4px] font-semibold">
-          {/* textLength distribui as letras exatamente pela circunferência (2π·44 ≈ 276). */}
-          <textPath href="#seal-circle" textLength="272" lengthAdjust="spacing">
-            {text.toUpperCase()}
-          </textPath>
-        </text>
-      </svg>
-      <span className="absolute top-1/2 left-1/2 size-2 -translate-1/2 rounded-full bg-clay" />
     </div>
   );
 }

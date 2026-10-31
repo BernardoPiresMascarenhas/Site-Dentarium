@@ -328,22 +328,6 @@
   animation-delay: 160ms;
 }
 
-/* O selo gira uma única vez na abertura e para — nenhum movimento contínuo. */
-.seal-spin {
-  transform-origin: center;
-  animation: seal-turn 2.2s var(--ease-out) both;
-  animation-delay: 300ms;
-}
-
-@keyframes seal-turn {
-  from {
-    transform: rotate(-70deg);
-  }
-  to {
-    transform: none;
-  }
-}
-
 .intro-wipe {
   animation: wipe 1.4s var(--ease-out) both;
   animation-delay: 420ms;

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { devices, expect, test } from "@playwright/test";
 
 const routes = [
   "/",
@@ -135,12 +135,13 @@ test.describe("menu mobile", () => {
 test.describe("interações", () => {
   test("acordeão do FAQ abre e fecha", async ({ page }) => {
     await page.goto("/");
-    const q = page.getByRole("button", { name: "Onde fica a clínica?" });
+    // A primeira pergunta já abre aberta; testa uma das seguintes.
+    const q = page.getByRole("button", { name: "A clínica tem acessibilidade?" });
     await q.scrollIntoViewIfNeeded();
     await expect(q).toHaveAttribute("aria-expanded", "false");
     await q.click();
     await expect(q).toHaveAttribute("aria-expanded", "true");
-    await expect(page.getByText("Rua do Ouro, 857, no bairro Serra")).toBeVisible();
+    await expect(page.getByText("A clínica conta com plataforma elevatória.", { exact: false })).toBeVisible();
     await q.click();
     await expect(q).toHaveAttribute("aria-expanded", "false");
   });
@@ -195,7 +196,7 @@ test.describe("interações", () => {
     await expect(first).toHaveAttribute("aria-selected", "true");
     await tablist.getByRole("tab", { name: /CAD\/CAM/ }).click();
     const panel = page.getByRole("tabpanel");
-    await expect(panel).toContainText("escaneamento");
+    await expect(panel).toContainText(/escaneamento/i);
     await page.keyboard.press("ArrowDown");
     await expect(tablist.getByRole("tab", { name: /Anestesia/ })).toBeFocused();
     await expect(tablist.getByRole("tab", { name: /Anestesia/ })).toHaveAttribute("aria-selected", "true");
@@ -374,14 +375,44 @@ test.describe("interações", () => {
     const tablist = page.getByRole("tablist", { name: "Etapas do CAD/CAM" });
     await tablist.scrollIntoViewIfNeeded();
     const panel = page.locator("#cad-cam").getByRole("tabpanel");
-    await expect(panel).toContainText("Escaneamento");
+    await expect(panel.getByRole("heading", { name: /Escaneamento/ })).toBeVisible();
+    await expect(panel.getByRole("heading")).toHaveCount(1);
     await page.getByRole("button", { name: "Próxima etapa" }).click();
     await expect(tablist.getByRole("tab", { name: /Desenho/ })).toHaveAttribute("aria-selected", "true");
     await tablist.getByRole("tab", { name: /Desenho/ }).focus();
     await page.keyboard.press("ArrowRight");
     await expect(tablist.getByRole("tab", { name: /Produção/ })).toBeFocused();
-    await expect(panel).toContainText("Fabricação");
+    await expect(panel.getByRole("heading", { name: "Fabricação da peça" })).toBeVisible();
+    await expect(panel.getByRole("heading")).toHaveCount(1);
     await expect(page.getByRole("button", { name: "Próxima etapa" })).toBeDisabled();
+  });
+
+  test("CAD/CAM no celular estreito: navegação em uma linha e altura estável", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 800 });
+    await page.goto("/tecnologia");
+    const tablist = page.getByRole("tablist", { name: "Etapas do CAD/CAM" });
+    await tablist.scrollIntoViewIfNeeded();
+    const card = tablist.locator("xpath=..");
+    const prev = page.getByRole("button", { name: "Etapa anterior" });
+    const next = page.getByRole("button", { name: "Próxima etapa" });
+    await expect(prev.locator("span:visible")).toHaveText("Anterior");
+    await expect(next.locator("span:visible")).toHaveText("Próxima");
+    const heights: number[] = [];
+    for (let i = 0; i < 3; i++) {
+      await tablist.getByRole("tab").nth(i).click();
+      heights.push((await card.boundingBox())!.height);
+      // Rótulos e contador em uma única linha; botões com área de toque de 44 px.
+      for (const el of [prev.locator("span:visible"), next.locator("span:visible"), card.getByText(`${i + 1} de 3`)]) {
+        expect(await el.evaluate((n) => n.getClientRects().length)).toBe(1);
+      }
+      for (const b of [prev, next, ...(await tablist.getByRole("tab").all())]) {
+        const box = (await b.boundingBox())!;
+        expect(box.height).toBeGreaterThanOrEqual(44);
+        expect(box.width).toBeGreaterThanOrEqual(44);
+      }
+    }
+    expect(new Set(heights.map(Math.round)).size).toBe(1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 
   test("cartões de tratamento levam às páginas individuais", async ({ page }) => {
@@ -451,6 +482,34 @@ test.describe("páginas de tratamento", () => {
     await expect(section.getByRole("link", { name: "CC BY-SA 3.0" })).toHaveAttribute("href", /creativecommons\.org\/licenses\/by-sa\/3\.0/);
     await expect(section).toContainText("pode ajustar o planejamento ao longo do tratamento");
     await expect(page.getByRole("main")).not.toContainText(/Invisalign|material institucional/);
+  });
+
+  test("detalhes complementares ficam em \"Entenda mais\" e abrem pela âncora", async ({ page }) => {
+    await page.goto("/tratamentos/implantes");
+    const nav = page.getByRole("navigation", { name: "Nesta página" });
+    await expect(nav.getByRole("link", { name: "Entenda mais" })).toHaveAttribute("href", "#entenda-mais");
+    const section = page.locator("#entenda-mais");
+    const item = section.getByRole("button", { name: "Quando falta osso" });
+    await expect(item).toHaveAttribute("aria-expanded", "false");
+    const panel = page.locator(`#${await item.getAttribute("aria-controls")}`);
+    // Recolhido: o painel tem altura zero (o texto continua no HTML).
+    expect((await panel.boundingBox())!.height).toBeLessThan(2);
+    await item.click();
+    await expect(item).toHaveAttribute("aria-expanded", "true");
+    await expect(section.getByText(/um enxerto ósseo cria condições/)).toBeVisible();
+    await expect(section.getByRole("link", { name: "Enxerto ósseo" })).toHaveAttribute("href", "/tratamentos/enxertos#enxerto-osseo");
+
+    // Link de outra página para um item recolhido: chega com o item aberto e visível.
+    await page.goto("/tratamentos/enxertos");
+    await page.getByRole("link", { name: "Retração gengival" }).click();
+    await expect(page).toHaveURL("/tratamentos/periodontia#retracao-gengival");
+    const retracao = page.locator("#retracao-gengival");
+    await expect(retracao.getByRole("button", { name: "Retração gengival" })).toHaveAttribute("aria-expanded", "true");
+    await expect(retracao.getByText(/escovação com força excessiva/)).toBeInViewport();
+
+    // Endereço aberto direto com a âncora.
+    await page.goto("/tratamentos/facetas-e-lentes#cad-cam");
+    await expect(page.locator("#cad-cam").getByRole("button", { name: "Confecção com CAD/CAM" })).toHaveAttribute("aria-expanded", "true");
   });
 
   test("índice da ortodontia tem rótulos e âncoras únicos e funcionais", async ({ page }) => {
@@ -546,7 +605,7 @@ test.describe("compartilhamento", () => {
     expect(image.origin).toBe("https://site-dentarium.vercel.app");
     const res = await request.get(image.pathname + image.search);
     expect(res.status()).toBe(200);
-    expect(res.headers()["content-type"]).toBe("image/jpeg");
+    expect(res.headers()["content-type"]).toBe("image/png");
     expect((await res.body()).length).toBeLessThan(300_000);
   });
 });
@@ -581,6 +640,83 @@ test.describe("convênios", () => {
     expect(order[1]).toBeLessThan(order[2]);
     await page.goto("/");
     await expect(page.getByRole("region", { name: "Convênios atendidos" })).toHaveCount(0);
+  });
+});
+
+test.describe("ambientes no celular", () => {
+  test.skip(({ isMobile }) => !isMobile, "carrossel só no celular");
+
+  test("fotos passam sozinhas, com indicadores e botão de pausa", async ({ page }) => {
+    await page.goto("/");
+    const list = page.getByRole("list", { name: "Fotos da clínica" });
+    await list.scrollIntoViewIfNeeded();
+    const dots = page.getByRole("button", { name: /Ver foto \d de 3/ });
+    await expect(dots).toHaveCount(3);
+    await expect(dots.nth(0)).toHaveAttribute("aria-current", "true");
+
+    // Avança sozinho.
+    await expect(dots.nth(1)).toHaveAttribute("aria-current", "true", { timeout: 7000 });
+    expect(await list.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
+
+    // Pausa: a posição não muda depois do intervalo.
+    await page.getByRole("button", { name: "Pausar fotos" }).click();
+    // Deixa terminar a rolagem suave que estiver em andamento antes de medir.
+    await page.waitForTimeout(1200);
+    const left = await list.evaluate((el) => el.scrollLeft);
+    await page.waitForTimeout(4800);
+    expect(await list.evaluate((el) => el.scrollLeft)).toBe(left);
+    await expect(page.getByRole("button", { name: "Retomar fotos" })).toHaveAttribute("aria-pressed", "true");
+
+    // Indicadores levam direto à foto.
+    await dots.nth(2).click();
+    await expect(dots.nth(2)).toHaveAttribute("aria-current", "true");
+  });
+
+  test("com movimento reduzido, nada passa sozinho e não há botão de pausa", async ({ browser }) => {
+    const context = await browser.newContext({ ...devices["Pixel 7"], reducedMotion: "reduce" });
+    const page = await context.newPage();
+    await page.goto("/");
+    const list = page.getByRole("list", { name: "Fotos da clínica" });
+    await list.scrollIntoViewIfNeeded();
+    const start = await list.evaluate((el) => el.scrollLeft);
+    await page.waitForTimeout(4800);
+    expect(await list.evaluate((el) => el.scrollLeft)).toBe(start);
+    await expect(page.getByRole("button", { name: /Pausar fotos/ })).toHaveCount(0);
+    await context.close();
+  });
+});
+
+test.describe("tecnologia", () => {
+  test("seções na ordem planejada e grade de recursos levando a cada aprofundamento", async ({ page }) => {
+    await page.goto("/tecnologia");
+    const main = page.getByRole("main");
+    const headings = await main.getByRole("heading", { level: 2 }).allTextContents();
+    expect(headings).toEqual([
+      "Tecnologia aplicada à odontologia.",
+      "Ver com clareza antes de decidir.",
+      "CAD/CAM em três etapas.",
+      "Recursos de conforto e precisão.",
+      "Cuidado também nos detalhes.",
+      expect.stringMatching(/Vamos conversar/),
+    ]);
+
+    const grid = page.getByRole("region", { name: "Tecnologia aplicada à odontologia." });
+    const cards = grid.getByRole("link");
+    await expect(cards).toHaveCount(8);
+    for (const href of await cards.evaluateAll((as) => as.map((a) => a.getAttribute("href")!))) {
+      await expect(page.locator(href)).toHaveCount(1);
+    }
+    await grid.getByRole("link", { name: /Laboratório de prótese/ }).click();
+    await expect(page).toHaveURL(/#laboratorio$/);
+    await expect(page.getByRole("heading", { name: "Laboratório de prótese na clínica" })).toBeInViewport();
+
+    // Fotografias reais nos blocos de diagnóstico e planejamento, carregadas.
+    for (const name of [/aparelho de tomografia/, /raio X intraoral/, /mostra informações no monitor/, /monitores suspensos/]) {
+      const img = page.locator("#diagnostico").getByRole("img", { name });
+      await img.scrollIntoViewIfNeeded();
+      await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+    }
+    await expect(page.locator("#conforto").getByText("Quando é usado")).toHaveCount(3);
   });
 });
 

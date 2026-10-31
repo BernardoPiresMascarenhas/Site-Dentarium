@@ -39,17 +39,10 @@ export function About() {
           <h2 id="sobre-title" className="display-lg mt-5">
             Um espaço pensado para você, cuidado pensado em conjunto.
           </h2>
-          <div className="prose-body mt-7 space-y-4">
-            <p>
-              A Dentarium reúne diferentes áreas da odontologia em um só endereço. Isso permite que
-              prevenção, estética e reabilitação sejam planejadas juntas, com cada etapa considerando
-              as outras.
-            </p>
-            <p>
-              Da sala de espera aos consultórios, os ambientes são claros e organizados: um lugar
-              para conversar com calma sobre o seu tratamento.
-            </p>
-          </div>
+          <p className="prose-body mt-7">
+            Prevenção, estética e reabilitação planejadas juntas, com cada etapa considerando as outras,
+            em ambientes feitos para conversar com calma sobre o seu tratamento.
+          </p>
           <dl className="mt-9 grid gap-6 border-t border-line pt-7 sm:grid-cols-2">
             <div>
               <dt className="text-sm font-semibold text-graphite">Endereço</dt>

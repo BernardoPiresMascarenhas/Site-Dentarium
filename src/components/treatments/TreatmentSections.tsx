@@ -3,7 +3,8 @@ import { ArrowRight, ArrowUpRight, RotateCcw } from "lucide-react";
 
 import type { Treatment, TreatmentDetail, TreatmentFeature, TreatmentLink } from "@/data/treatments";
 import { Accordion } from "@/components/ui/Accordion";
-import { Reveal } from "@/components/ui/Reveal";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { DetailsAccordion } from "./DetailsAccordion";
 import { ToothDiagram } from "./ToothDiagram";
 import { ClinicPhotoFigure, TreatmentMediaFigure } from "./TreatmentMediaFigure";
 
@@ -40,8 +41,7 @@ export function IntroSection({ treatment }: { treatment: Treatment }) {
   const cards = treatment.layout?.when === "cards";
   const note = (
     <p className="mt-6 text-sm leading-relaxed text-stone">
-      Esses sinais não indicam, por si só, a necessidade do tratamento. São um bom motivo para uma
-      avaliação.
+      São bons motivos para uma avaliação, não uma indicação de tratamento.
     </p>
   );
 
@@ -77,14 +77,14 @@ export function IntroSection({ treatment }: { treatment: Treatment }) {
           <h2 id="indicacoes-title" className="display-md">
             {heading}
           </h2>
-          <ul className="mt-6 space-y-4">
+          <Stagger className="mt-6 space-y-4">
             {treatment.whenToTalk.map((item) => (
-              <li key={item} className="grid grid-cols-[1.25rem_1fr] gap-4 leading-relaxed text-ink/90">
+              <StaggerItem key={item} className="grid grid-cols-[1.25rem_1fr] gap-4 leading-relaxed text-ink/90">
                 <ArchBullet />
                 {item}
-              </li>
+              </StaggerItem>
             ))}
-          </ul>
+          </Stagger>
           {note}
         </div>
       </div>
@@ -385,6 +385,24 @@ export function DetailsSection({ treatment }: { treatment: Treatment }) {
   const compare = treatment.layout?.details === "compare";
   const title = treatment.detailsTitle ?? "Em detalhe";
 
+  if (treatment.layout?.details === "accordion") {
+    return (
+      <section id="entenda-mais" aria-labelledby="detalhes-title" className={`py-16 md:py-24 ${anchorOffset}`}>
+        <div className="container-site grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <div>
+            <p className="kicker">Entenda mais</p>
+            <h2 id="detalhes-title" className="display-md mt-5 max-w-[24rem]">
+              {title}
+            </h2>
+          </div>
+          <DetailsAccordion
+            items={details.map((d) => ({ id: d.id, title: d.title, content: <DetailBody detail={d} /> }))}
+          />
+        </div>
+      </section>
+    );
+  }
+
   if (compare) {
     return (
       <section
@@ -476,7 +494,7 @@ export function CareAndFaqSection({ treatment }: { treatment: Treatment }) {
   return (
     <section id="duvidas" aria-labelledby="duvidas-title" className={`border-t border-line py-16 md:py-24 ${anchorOffset}`}>
       <div className="container-site grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-        <div>
+        <Reveal>
           <p className="kicker">Perguntas frequentes</p>
           <h2 id="duvidas-title" className="display-lg mt-5 max-w-[22rem]">
             {faqTitle}
@@ -500,7 +518,7 @@ export function CareAndFaqSection({ treatment }: { treatment: Treatment }) {
               Este conteúdo é informativo e não substitui a consulta com cirurgião-dentista.
             </p>
           )}
-        </div>
+        </Reveal>
         <Accordion items={treatment.faq} />
       </div>
     </section>

@@ -107,7 +107,8 @@ export type Treatment = {
   layout?: {
     when?: "list" | "cards";
     steps?: "list" | "timeline" | "cycle";
-    details?: "stack" | "compare";
+    /** "accordion": detalhes complementares recolhidos em "Entenda mais". */
+    details?: "stack" | "compare" | "accordion";
     /** Mostra as seções aprofundadas antes do bloco editorial e das etapas. */
     detailsFirst?: boolean;
   };
@@ -141,7 +142,7 @@ export const treatments: Treatment[] = [
     featured: true,
     summary: "Reposição de dentes perdidos com uma raiz artificial que sustenta a coroa.",
     intro:
-      "O implante dentário é uma peça, geralmente de titânio, instalada no osso para fazer o papel da raiz de um dente ausente. Sobre ele é fixada uma coroa ou outra prótese. Se ele é uma boa opção para você depende da avaliação da saúde geral, da gengiva e da quantidade de osso disponível.",
+      "O implante dentário é uma peça, geralmente de titânio, instalada no osso para fazer o papel da raiz de um dente ausente. Se ele é uma boa opção para você depende da saúde geral, da gengiva e da quantidade de osso disponível.",
     whenToTalk: [
       "Você perdeu um ou mais dentes e quer entender as alternativas de reposição.",
       "Usa uma prótese removível e gostaria de saber se há outras possibilidades.",
@@ -150,7 +151,7 @@ export const treatments: Treatment[] = [
     overview: [
       {
         title: "Avaliação e exames",
-        text: "Conversa sobre histórico de saúde, exame clínico e, quando necessário, exames de imagem para avaliar o osso. A avaliação individual vem antes de qualquer planejamento.",
+        text: "Histórico de saúde, exame clínico e, quando necessário, exames de imagem para avaliar o osso.",
       },
       {
         title: "Planejamento",
@@ -158,23 +159,18 @@ export const treatments: Treatment[] = [
       },
       {
         title: "Instalação e cicatrização",
-        text: "O implante é instalado em procedimento cirúrgico. Segue-se um período de integração ao osso, que varia de pessoa para pessoa.",
+        text: "O implante é instalado em procedimento cirúrgico e passa por um período de integração ao osso.",
       },
       {
         title: "Prótese e acompanhamento",
-        text: "A coroa ou prótese é confeccionada e instalada. Revisões periódicas ajudam a manter gengiva e implante saudáveis.",
+        text: "A coroa ou prótese é confeccionada e instalada sobre o implante.",
       },
     ],
     faq: [
       {
         question: "Qualquer pessoa pode fazer implante?",
         answer:
-          "Não necessariamente. Condições de saúde, hábitos e a quantidade de osso influenciam a indicação. Por isso a avaliação individual vem antes de qualquer planejamento.",
-      },
-      {
-        question: "E se faltar osso no local?",
-        answer:
-          "Em alguns casos é possível considerar enxertos antes ou durante a instalação. O cirurgião-dentista explica as alternativas depois de examinar a região.",
+          "Não necessariamente. Condições de saúde, hábitos e a quantidade de osso influenciam a indicação, que só é definida na avaliação.",
       },
     ],
     detailsTitle: "Implantes no conjunto do tratamento",
@@ -183,7 +179,7 @@ export const treatments: Treatment[] = [
         id: "quando-falta-osso",
         title: "Quando falta osso",
         paragraphs: [
-          "Depois da perda de um dente, o osso da região pode diminuir de altura ou de espessura. Nesses casos, um enxerto ósseo pode ser planejado para criar condições de instalar o implante.",
+          "Depois da perda de um dente, o osso pode diminuir de altura ou de espessura. Em alguns casos, um enxerto ósseo cria condições para instalar o implante, antes ou durante o procedimento.",
         ],
         link: { href: "/tratamentos/enxertos#enxerto-osseo", label: "Enxerto ósseo" },
       },
@@ -203,14 +199,13 @@ export const treatments: Treatment[] = [
       care: "Antes de decidir",
       faq: "Dúvidas sobre implantes",
     },
-    layout: { steps: "timeline" },
+    layout: { steps: "timeline", details: "accordion" },
     feature: {
       id: "estrutura-do-implante",
       style: "split",
       kicker: "Como é um implante",
       title: "Três partes que trabalham juntas.",
       paragraphs: [
-        "O implante substitui a raiz do dente. É sobre ele que a parte visível (a coroa ou outra prótese) é fixada, por meio de um componente de ligação.",
         "Posição, tipo de prótese e materiais são definidos no planejamento, a partir dos exames de cada paciente.",
       ],
       parts: [
@@ -222,7 +217,6 @@ export const treatments: Treatment[] = [
     },
     care: [
       "O tempo de integração ao osso e o número de etapas variam de pessoa para pessoa.",
-      "Condições de saúde, hábitos e a quantidade de osso influenciam a indicação.",
       "Implantes também precisam de higiene diária e de revisões periódicas.",
     ],
     whatsappTopic: "o tratamento de implantes dentários",
@@ -235,7 +229,7 @@ export const treatments: Treatment[] = [
     featured: true,
     summary: "Correção da posição dos dentes e da mordida com aparelhos fixos ou alinhadores transparentes.",
     intro:
-      "A ortodontia trata do posicionamento dos dentes e da relação entre as arcadas. Além da aparência, o alinhamento interfere na mastigação, na higiene e na distribuição de forças sobre os dentes. Existem diferentes tipos de aparelho, dos fixos convencionais aos alinhadores transparentes, e a escolha depende do diagnóstico de cada caso.",
+      "A ortodontia trata da posição dos dentes e da relação entre as arcadas. Além da aparência, o alinhamento interfere na mastigação e na higiene. A escolha entre aparelho fixo e alinhadores transparentes depende do diagnóstico.",
     whenToTalk: [
       "Seus dentes estão apinhados, espaçados ou desalinhados.",
       "Você percebe que a mordida não encaixa como deveria.",
@@ -248,11 +242,11 @@ export const treatments: Treatment[] = [
       },
       {
         title: "Planejamento e escolha do aparelho",
-        text: "O tipo de aparelho é definido junto com você, considerando as necessidades do caso e sua rotina. No caso dos alinhadores, o planejamento digital define a sequência de placas.",
+        text: "O tipo de aparelho é definido com você, considerando as necessidades do caso e a sua rotina.",
       },
       {
         title: "Consultas de ajuste",
-        text: "O tratamento é acompanhado em consultas periódicas, nas quais o aparelho é ajustado ou a evolução dos alinhadores é conferida.",
+        text: "Consultas periódicas para ajustar o aparelho ou conferir a evolução dos alinhadores.",
       },
       {
         title: "Contenção",
@@ -264,11 +258,6 @@ export const treatments: Treatment[] = [
         question: "Existe idade certa para começar?",
         answer:
           "A ortodontia pode ser feita em diferentes fases da vida. Em crianças, a avaliação precoce ajuda a acompanhar o crescimento; em adultos, o tratamento também é possível.",
-      },
-      {
-        question: "Alinhadores transparentes servem para qualquer caso?",
-        answer:
-          "Não necessariamente. A indicação depende do tipo de correção necessária, que só é definida no diagnóstico ortodôntico. Em alguns casos, o aparelho fixo pode ser a alternativa mais adequada.",
       },
       {
         question: "Quanto tempo dura o tratamento?",
@@ -290,16 +279,14 @@ export const treatments: Treatment[] = [
         id: "aparelho-fixo",
         title: "Aparelho fixo convencional",
         paragraphs: [
-          "Pequenas peças, os bráquetes, são coladas aos dentes e ligadas por um fio. Os ajustes feitos nas consultas orientam a movimentação dos dentes.",
-          "Fica instalado durante todo o tratamento e é removido apenas pelo dentista.",
+          "Bráquetes colados aos dentes e ligados por um fio, ajustado nas consultas. Fica instalado durante todo o tratamento.",
         ],
       },
       {
         id: "alinhadores",
         title: "Alinhadores transparentes",
         paragraphs: [
-          "Placas transparentes e removíveis, feitas sob medida a partir de um planejamento digital. Cada placa da sequência promove uma pequena movimentação dos dentes.",
-          "São retiradas para comer e escovar os dentes e dependem do uso pelo tempo orientado pelo dentista.",
+          "Placas transparentes e removíveis, feitas sob medida e retiradas para comer e escovar os dentes.",
         ],
         link: { href: "#alinhadores-transparentes", label: "Saiba mais sobre alinhadores" },
       },
@@ -310,20 +297,14 @@ export const treatments: Treatment[] = [
       kicker: "Alinhadores transparentes",
       title: "Discretos, removíveis e planejados no computador.",
       paragraphs: [
-        "Os alinhadores são placas finas e transparentes que se encaixam sobre os dentes. Em vez de bráquetes e fio, o tratamento usa uma sequência de placas, trocadas conforme a orientação do ortodontista.",
-        "O planejamento é individualizado: parte do diagnóstico ortodôntico e dos registros digitais da arcada de cada paciente para definir a sequência de placas. Nas consultas de acompanhamento, o ortodontista confere a evolução e pode ajustar o planejamento ao longo do tratamento.",
-      ],
-      parts: [
-        { label: "Diferença dos convencionais", text: "São transparentes e removíveis; o aparelho fixo permanece colado aos dentes." },
-        { label: "Planejamento", text: "Feito para cada paciente e dividido em etapas, uma para cada placa. O acompanhamento permite ajustes durante o tratamento." },
-        { label: "Indicação", text: "Nem todo caso é indicado para alinhadores. A decisão depende da avaliação ortodôntica." },
+        "Em vez de bráquetes e fio, o tratamento usa uma sequência de placas finas, definida a partir dos registros digitais da arcada e trocada conforme a orientação do ortodontista. Nas consultas, ele confere a evolução e pode ajustar o planejamento ao longo do tratamento.",
+        "Nem todo caso é indicado para alinhadores; em alguns, o aparelho fixo é a alternativa mais adequada.",
       ],
       media: "alinhador",
     },
     care: [
       "Alinhadores só funcionam quando usados pelo tempo orientado pelo dentista.",
       "Aparelho fixo e alinhadores pedem cuidado redobrado com a escovação e o fio dental.",
-      "Duração, tipo de aparelho e frequência das consultas são definidos no diagnóstico.",
     ],
     related: ["placas-de-bruxismo", "odontopediatria", "primeira-consulta"],
   },
@@ -334,20 +315,20 @@ export const treatments: Treatment[] = [
     featured: true,
     summary: "Redução de manchas e escurecimento dos dentes com acompanhamento profissional.",
     intro:
-      "Cada vez mais procurado, o clareamento dental está ligado à aparência e à autoestima. O gel clareador age na dentina, o tecido do dente que retém pigmentos de alimentos e bebidas responsáveis pelo tom amarelado, e atenua essa coloração. Pode ser feito no consultório, em casa com moldeiras sob medida ou combinando as duas formas, sempre depois de verificar se dentes e gengivas estão saudáveis.",
+      "O clareamento dental atenua o tom amarelado causado por pigmentos de alimentos e bebidas. Pode ser feito no consultório, em casa com moldeiras sob medida ou combinando as duas formas, sempre depois de verificar se dentes e gengivas estão saudáveis.",
     whenToTalk: [
       "Você nota que a cor dos dentes escureceu com o tempo.",
-      "Quer saber se restaurações ou próteses existentes acompanhariam a mudança de cor.",
+      "Tem manchas e quer saber se o clareamento é o caminho indicado.",
       "Tem sensibilidade e quer entender como isso influencia o clareamento.",
     ],
     overview: [
       {
         title: "Avaliação prévia",
-        text: "Verificação de cáries, restaurações e sensibilidade, que podem exigir cuidados antes do clareamento.",
+        text: "Cáries, restaurações, retração da gengiva e sensibilidade podem exigir cuidados antes do clareamento.",
       },
       {
         title: "Escolha da técnica",
-        text: "Consultório, caseiro supervisionado ou combinado: a técnica é escolhida conforme o caso.",
+        text: "Consultório, caseiro supervisionado ou as duas formas, conforme o caso.",
       },
       {
         title: "Acompanhamento",
@@ -355,11 +336,6 @@ export const treatments: Treatment[] = [
       },
     ],
     faq: [
-      {
-        question: "O clareamento muda a cor de restaurações?",
-        answer:
-          "Não. Restaurações, facetas e coroas mantêm a cor original, o que deve ser considerado no planejamento.",
-      },
       {
         question: "Posso usar produtos clareadores por conta própria?",
         answer:
@@ -372,23 +348,20 @@ export const treatments: Treatment[] = [
         id: "clareamento-em-consultorio",
         title: "Clareamento em consultório",
         paragraphs: [
-          "Também chamado de clareamento imediato, é feito na própria clínica. O dentista aplica um gel clareador mais concentrado que o de uso caseiro e utiliza luz de LED, que ajuda a acelerar a reação química de clareamento.",
-          "Todo o processo acontece sob a supervisão direta do profissional.",
+          "Também chamado de clareamento imediato. Na clínica, sob supervisão direta, o dentista aplica um gel mais concentrado que o de uso caseiro e usa luz de LED, que ajuda a acelerar a reação de clareamento.",
         ],
       },
       {
         id: "clareamento-caseiro",
         title: "Clareamento caseiro supervisionado",
         paragraphs: [
-          "Também chamado de clareamento mediato. O paciente recebe moldeiras feitas sob medida e aplica o gel clareador em casa, no horário que preferir, seguindo as orientações e o acompanhamento do dentista.",
-          "As duas técnicas também podem ser combinadas, conforme a avaliação.",
+          "Também chamado de clareamento mediato. Com moldeiras feitas sob medida, o paciente aplica o gel em casa, no horário que preferir, com o acompanhamento do dentista. As duas técnicas podem ser combinadas.",
         ],
       },
     ],
     care: [
       "Restaurações, facetas e coroas não mudam de cor com o clareamento.",
       "Sensibilidade durante o processo pode acontecer e deve ser comunicada ao dentista.",
-      "A técnica, a concentração do gel e o número de sessões são definidos na avaliação.",
     ],
     keywords: ["clareamento dental", "dentes amarelados", "manchas", "LED", "moldeira"],
     headings: {
@@ -403,10 +376,6 @@ export const treatments: Treatment[] = [
       style: "split",
       kicker: "Como o clareamento age",
       title: "A cor do dente vem de dentro.",
-      paragraphs: [
-        "Pigmentos de alimentos e bebidas ficam retidos na dentina, o tecido logo abaixo do esmalte. É nela que o gel clareador age, atenuando o tom amarelado.",
-        "Por isso a avaliação vem antes: cáries, restaurações, retração da gengiva e sensibilidade influenciam a técnica e os cuidados de cada caso.",
-      ],
       parts: [
         { label: "Esmalte", text: "Camada externa e translúcida, que deixa a cor da dentina aparecer." },
         { label: "Dentina", text: "Retém os pigmentos responsáveis pelo tom amarelado. É onde o gel clareador age." },
@@ -422,7 +391,7 @@ export const treatments: Treatment[] = [
     featured: true,
     summary: "Coroas, pontes e próteses para recuperar dentes perdidos ou muito desgastados.",
     intro:
-      "A perda de dentes vai além da estética: pode prejudicar a fala e a mastigação, levar à movimentação dos dentes que restaram e à perda de osso na região. As próteses dentárias substituem dentes ausentes ou muito comprometidos para recuperar função e aparência. Cada caso é analisado considerando os hábitos e o histórico de saúde do paciente, e diferentes materiais podem ser usados.",
+      "A perda de dentes pode prejudicar a fala e a mastigação, levar à movimentação dos dentes que restaram e à perda de osso na região. As próteses substituem dentes ausentes ou muito comprometidos para recuperar função e aparência, com material escolhido conforme os hábitos e o histórico de cada paciente.",
     whenToTalk: [
       "Um dente está muito destruído ou fraturado.",
       "Você perdeu dentes e sente dificuldade para mastigar.",
@@ -443,15 +412,10 @@ export const treatments: Treatment[] = [
       },
       {
         title: "Manutenção",
-        text: "Consultas de revisão ajudam a conservar a prótese e a saúde dos tecidos ao redor.",
+        text: "Revisões periódicas da prótese e dos tecidos ao redor.",
       },
     ],
     faq: [
-      {
-        question: "A falta de dentes pode me prejudicar?",
-        answer:
-          "Sim. Além da aparência, a ausência de dentes pode afetar a fala e a mastigação, favorecer a movimentação dos dentes vizinhos e a perda de osso na região. Por isso vale avaliar as alternativas de reposição.",
-      },
       {
         question: "Prótese fixa ou removível: qual é melhor?",
         answer:
@@ -464,15 +428,15 @@ export const treatments: Treatment[] = [
         id: "fixas-e-removiveis",
         title: "Próteses fixas e removíveis",
         paragraphs: [
-          "A prótese fixa é uma estrutura parafusada ou cimentada sobre implantes ou dentes naturais, e não é retirada pelo paciente. A prótese removível pode ser colocada e retirada para higiene. A escolha depende de quantos dentes faltam, das condições dos dentes de apoio e do osso.",
+          "A prótese fixa é parafusada ou cimentada sobre implantes ou dentes naturais e não é retirada pelo paciente. A removível pode ser colocada e retirada para a higiene.",
         ],
       },
       {
         id: "retencao-de-dentaduras",
         title: "Mais retenção para dentaduras",
         paragraphs: [
-          "Conviver com uma dentadura que se movimenta exige atenção constante. Uma das alternativas é a dentadura apoiada em implantes, que aumenta a retenção e a estabilidade da prótese e pode ajudar a reduzir a perda óssea.",
-          "O planejamento parte de um estudo da arcada dentária, que pode ser complementado pelo planejamento digital do sorriso, buscando um resultado natural e confortável.",
+          "Uma dentadura que se movimenta exige atenção constante. Apoiada em implantes, ela ganha retenção e estabilidade, o que também pode ajudar a reduzir a perda óssea.",
+          "O planejamento parte de um estudo da arcada e pode incluir o planejamento digital do sorriso.",
         ],
         media: "proteseFixaDentadura",
         link: { href: "/tratamentos/implantes", label: "Como funcionam os implantes" },
@@ -481,7 +445,7 @@ export const treatments: Treatment[] = [
         id: "laboratorio",
         title: "Confecção no laboratório",
         paragraphs: [
-          "Cada sorriso e cada arcada têm características próprias, e considerá-las na confecção é fundamental para uma aparência natural. A Dentarium conta com laboratório de prótese, e algumas peças podem ser produzidas pelo sistema CAD/CAM.",
+          "A Dentarium conta com laboratório de prótese, o que permite considerar as características de cada arcada na confecção. Algumas peças podem ser produzidas pelo sistema CAD/CAM.",
         ],
         link: { href: "/tecnologia#cad-cam", label: "CAD/CAM em três etapas" },
       },
@@ -543,15 +507,10 @@ export const treatments: Treatment[] = [
           "O dente tratado pode ficar mais frágil. A restauração adequada protege contra fraturas e infiltrações.",
       },
     ],
-    care: [
-      "Exames de imagem e recursos específicos da endodontia apoiam o profissional durante o tratamento.",
-      "Após o canal, siga as orientações sobre a restauração definitiva do dente.",
-    ],
     keywords: ["endodontia", "canal", "dor de dente", "polpa", "nervo do dente"],
     headings: {
       when: "Quando o tratamento de canal pode ser necessário?",
       steps: "Como o canal é tratado",
-      care: "Depois do tratamento",
       faq: "Dúvidas sobre tratamento de canal",
     },
     layout: { steps: "timeline" },
@@ -561,12 +520,11 @@ export const treatments: Treatment[] = [
       kicker: "Por dentro do dente",
       title: "O tratamento acontece onde não se vê.",
       paragraphs: [
-        "Sob o esmalte e a dentina fica a polpa, um tecido com vasos e nervos que se estende pelos canais da raiz. Quando ela inflama ou infecciona, o tratamento remove o tecido comprometido e sela os canais.",
         "Exames de imagem e recursos próprios da endodontia apoiam o profissional em um espaço tão pequeno.",
       ],
       parts: [
-        { label: "Polpa", text: "Tecido no interior do dente. É ela que pode inflamar após cárie profunda ou fratura." },
-        { label: "Canal da raiz", text: "É limpo, modelado e preenchido para evitar nova contaminação." },
+        { label: "Polpa", text: "Tecido com vasos e nervos, sob o esmalte e a dentina." },
+        { label: "Canal da raiz", text: "Por onde a polpa se estende até a ponta da raiz." },
       ],
       diagram: "canal",
       link: { href: "/tecnologia", label: "Recursos usados na clínica" },
@@ -581,7 +539,7 @@ export const treatments: Treatment[] = [
     featured: true,
     summary: "Cuidado com a saúde bucal de bebês, crianças e adolescentes.",
     intro:
-      "A odontopediatria acompanha a saúde bucal desde a gestação e os primeiros dentes até a adolescência. Mais do que tratar, o foco é prevenir: observar o desenvolvimento da arcada e orientar a família sobre alimentação, higiene e hábitos. Na Dentarium, esse atendimento se chama Dentarium Kids.",
+      "A odontopediatria acompanha a saúde bucal da gestação à adolescência. O foco é prevenir: observar o desenvolvimento da arcada e orientar a família sobre alimentação, higiene e hábitos. Na Dentarium, esse atendimento se chama Dentarium Kids.",
     whenToTalk: [
       "Os primeiros dentes do bebê estão nascendo.",
       "Você tem dúvidas sobre escovação, uso de chupeta ou hábitos da criança.",
@@ -608,11 +566,6 @@ export const treatments: Treatment[] = [
           "É comum recomendar a primeira visita por volta do nascimento dos primeiros dentes. O odontopediatra orienta a frequência ideal para cada criança.",
       },
       {
-        question: "Gestantes podem ir ao dentista?",
-        answer:
-          "Sim, e o acompanhamento é recomendado. No pré-natal odontológico, o dentista cuida da saúde bucal da gestante e orienta sobre os primeiros cuidados com o bebê. Informe sempre a gestação e o período ao agendar.",
-      },
-      {
         question: "Dentes de leite precisam de tratamento se vão cair?",
         answer:
           "Sim. Eles participam da mastigação, da fala e guardam espaço para os dentes permanentes.",
@@ -624,8 +577,7 @@ export const treatments: Treatment[] = [
         id: "pre-natal-odontologico",
         title: "Pré-natal odontológico",
         paragraphs: [
-          "A gestação pede cuidados específicos, inclusive com a boca. Algumas alterações, como a inflamação da gengiva, tendem a ser mais frequentes nesse período e merecem atenção também pela saúde do bebê.",
-          "O acompanhamento odontológico durante a gravidez é também o momento de receber orientações sobre os primeiros cuidados com a saúde bucal do recém-nascido.",
+          "Algumas alterações, como a inflamação da gengiva, tendem a ser mais frequentes na gestação e merecem atenção também pela saúde do bebê. O acompanhamento é também o momento de receber orientações sobre os primeiros cuidados com o recém-nascido.",
         ],
         points: [
           "Informe a gestação e o período ao agendar.",
@@ -637,8 +589,7 @@ export const treatments: Treatment[] = [
         id: "dentarium-kids",
         title: "Dentarium Kids",
         paragraphs: [
-          "Para os pequenos, o atendimento usa brinquedos e acessórios lúdicos que criam um ambiente descontraído durante a consulta.",
-          "O vínculo de confiança entre a criança e o odontopediatra é construído a cada visita, para que ir ao dentista seja uma experiência mais tranquila.",
+          "Brinquedos e acessórios lúdicos deixam a consulta mais descontraída, e a confiança com o odontopediatra é construída a cada visita.",
         ],
         media: "dentariumKids",
       },
@@ -646,8 +597,7 @@ export const treatments: Treatment[] = [
         id: "acompanhamento-pediatrico",
         title: "Acompanhamento pediátrico",
         paragraphs: [
-          "O acompanhamento tem foco na prevenção, e não apenas no tratamento de doenças. Ele permite identificar cedo alterações nos dentes e no desenvolvimento, abrindo espaço para abordagens preventivas desde o nascimento dos primeiros dentes.",
-          "Com orientação e compreensão da importância de cuidados como a escovação, a própria criança começa a assumir responsabilidade pela sua saúde bucal, o que ajuda a prevenir cáries e outros problemas.",
+          "Identificar cedo alterações nos dentes e no desenvolvimento abre espaço para a prevenção. Com orientação, a própria criança começa a cuidar da escovação.",
         ],
       },
     ],
@@ -664,7 +614,7 @@ export const treatments: Treatment[] = [
       kicker: "Dentarium Kids",
       title: "Da gestação à adolescência.",
       paragraphs: [
-        "O cuidado começa antes do primeiro dente e acompanha a criança enquanto ela cresce, com um ambiente descontraído e uma relação de confiança construída a cada visita.",
+        "O cuidado começa antes do primeiro dente e acompanha a criança enquanto ela cresce.",
       ],
       parts: [
         { label: "Gestação", text: "Pré-natal odontológico: saúde bucal da gestante e orientações para o bebê.", href: "#pre-natal-odontologico" },
@@ -681,7 +631,7 @@ export const treatments: Treatment[] = [
     category: "prevencao",
     summary: "Conversa, exame clínico e orientação sobre os próximos passos.",
     intro:
-      "A primeira consulta é essencial para que o dentista conheça o seu histórico e os aspectos que compõem a sua saúde bucal. Antes de começar qualquer tratamento, é importante conhecer a fundo o paciente: por isso ela inclui a anamnese, um levantamento da sua saúde geral, além do exame clínico.",
+      "Na primeira consulta, o dentista conhece o seu histórico e a sua saúde bucal antes de propor qualquer tratamento. Ela inclui a anamnese, um levantamento da sua saúde geral, e o exame clínico.",
     whenToTalk: [
       "Faz tempo desde sua última consulta.",
       "Você mudou de cidade ou de dentista e quer uma nova avaliação.",
@@ -690,7 +640,7 @@ export const treatments: Treatment[] = [
     overview: [
       {
         title: "Conversa e anamnese",
-        text: "Seu motivo de consulta, expectativas e histórico de saúde, como diabetes, hipertensão, problemas cardíacos e medicamentos em uso. Essas informações orientam a segurança do tratamento.",
+        text: "Seu motivo de consulta, expectativas e histórico de saúde, como diabetes, hipertensão, problemas cardíacos e medicamentos em uso, que orientam a segurança do tratamento.",
       },
       {
         title: "Exame clínico e registros",
@@ -698,11 +648,11 @@ export const treatments: Treatment[] = [
       },
       {
         title: "Análise em conjunto",
-        text: "Depois da consulta, os profissionais analisam o caso em conjunto, cada um em sua área, para chegar a um diagnóstico multidisciplinar.",
+        text: "Os profissionais discutem o caso, cada um em sua área.",
       },
       {
         title: "Retorno com o plano",
-        text: "Um retorno é agendado para apresentar o diagnóstico e o plano de tratamento, com as alternativas e o que esperar de cada etapa.",
+        text: "Um retorno é agendado para apresentar o diagnóstico e o plano de tratamento.",
       },
     ],
     faq: [
@@ -722,11 +672,10 @@ export const treatments: Treatment[] = [
     feature: {
       id: "plano-individual",
       style: "split",
-      kicker: "Planejamento individualizado",
+      kicker: "Diagnóstico multidisciplinar",
       title: "Um diagnóstico construído em conjunto.",
       paragraphs: [
-        "Depois da consulta, os profissionais da clínica analisam o caso juntos, cada um em sua área. O plano de tratamento nasce dessa análise multidisciplinar.",
-        "No retorno, o plano é apresentado com calma no consultório, com as alternativas possíveis e o que esperar de cada etapa.",
+        "O plano de tratamento nasce da análise conjunta dos profissionais. No retorno, à mesa de atendimento, ele é apresentado com as alternativas possíveis e o que esperar de cada etapa.",
       ],
       clinicImage: "primeiraConsulta",
       link: { href: "/equipe", label: "Conheça a equipe" },
@@ -740,7 +689,7 @@ export const treatments: Treatment[] = [
     category: "prevencao",
     summary: "Revisões periódicas, limpeza profissional e orientação de higiene.",
     intro:
-      "A manutenção preventiva reúne as consultas regulares de revisão. Nelas o dentista acompanha dentes, gengivas, restaurações e próteses, faz a limpeza profissional quando indicada e ajusta as orientações de higiene. Identificar alterações cedo costuma permitir tratamentos mais simples.",
+      "A manutenção preventiva reúne as consultas regulares de revisão. Nelas o dentista acompanha dentes, gengivas, restaurações e próteses, faz a limpeza profissional quando indicada e ajusta as orientações de higiene.",
     whenToTalk: [
       "Você concluiu um tratamento e quer manter os resultados.",
       "Tem implantes, próteses ou aparelho ortodôntico.",
@@ -837,7 +786,7 @@ export const treatments: Treatment[] = [
       steps: "Como o tratamento periodontal é conduzido",
       faq: "Dúvidas sobre gengiva",
     },
-    layout: { when: "cards" },
+    layout: { when: "cards", details: "accordion" },
     feature: {
       id: "suporte-dos-dentes",
       style: "split",
@@ -861,7 +810,7 @@ export const treatments: Treatment[] = [
     category: "estetica",
     summary: "Lâminas cerâmicas que modificam cor, forma ou proporção dos dentes.",
     intro:
-      "Facetas e lentes de contato de porcelana são películas cerâmicas muito finas, cimentadas na face externa dos dentes para corrigir cor e forma. O tratamento parte de um desenho personalizado do sorriso. A indicação exige dentes e gengivas saudáveis e um planejamento cuidadoso, já que, em muitos casos, há algum preparo do dente.",
+      "Facetas e lentes de contato de porcelana são películas cerâmicas muito finas, cimentadas na face externa dos dentes para corrigir cor e forma. A indicação exige dentes e gengivas saudáveis e um planejamento cuidadoso, já que, em muitos casos, há algum preparo do dente.",
     whenToTalk: [
       "Você gostaria de mudar a forma ou o tamanho de alguns dentes.",
       "Tem manchas que não respondem ao clareamento.",
@@ -883,14 +832,9 @@ export const treatments: Treatment[] = [
     ],
     faq: [
       {
-        question: "O que são facetas ou lentes de contato?",
-        answer:
-          "São películas finas de porcelana cimentadas na face externa dos dentes. Elas podem corrigir cor e forma, a partir de um desenho personalizado do sorriso. A indicação depende de avaliação.",
-      },
-      {
         question: "Facetas precisam de manutenção?",
         answer:
-          "Sim. Revisões periódicas e cuidados com hábitos como ranger os dentes ajudam a preservar as peças.",
+          "Sim. Além das revisões periódicas, hábitos como ranger os dentes precisam ser avaliados, pois podem exigir proteção adicional.",
       },
     ],
     detailsTitle: "Do desenho digital à peça de porcelana",
@@ -899,7 +843,7 @@ export const treatments: Treatment[] = [
         id: "desenho-personalizado",
         title: "Desenho personalizado",
         paragraphs: [
-          "Cada sorriso é desenhado de forma individual. O planejamento digital do sorriso pode ajudar a visualizar e discutir a proposta antes da confecção das peças.",
+          "O planejamento digital do sorriso ajuda a visualizar e discutir a proposta antes da confecção das peças.",
         ],
         link: { href: "/tratamentos/planejamento-digital-do-sorriso", label: "Planejamento digital do sorriso" },
       },
@@ -907,7 +851,7 @@ export const treatments: Treatment[] = [
         id: "cad-cam",
         title: "Confecção com CAD/CAM",
         paragraphs: [
-          "O CAD/CAM é uma tecnologia de desenho e fabricação de peças assistida por computador. Em alguns casos, ele agiliza a confecção das facetas e reduz o número de etapas. A viabilidade depende de cada situação.",
+          "Desenho e fabricação de peças assistidos por computador. Em alguns casos, agiliza a confecção das facetas e reduz o número de etapas.",
         ],
         link: { href: "/tecnologia#cad-cam", label: "CAD/CAM em três etapas" },
       },
@@ -915,7 +859,6 @@ export const treatments: Treatment[] = [
     care: [
       "Escovação e fio dental continuam indispensáveis.",
       "Revisões periódicas ajudam a conservar as peças e a gengiva ao redor.",
-      "Hábitos como ranger os dentes devem ser avaliados, pois podem exigir proteção adicional.",
     ],
     keywords: ["facetas", "lentes de contato dental", "porcelana", "cerâmica", "lente de contato"],
     headings: {
@@ -924,15 +867,14 @@ export const treatments: Treatment[] = [
       care: "Para conservar as peças",
       faq: "Dúvidas sobre facetas e lentes",
     },
-    layout: { steps: "timeline" },
+    layout: { steps: "timeline", details: "accordion" },
     feature: {
       id: "planejamento-personalizado",
       style: "split",
-      kicker: "Planejamento personalizado",
-      title: "Um desenho para cada sorriso.",
+      kicker: "Estudo do sorriso",
+      title: "O sorriso é estudado antes das peças.",
       paragraphs: [
-        "Antes de qualquer peça, o sorriso é estudado: proporções do rosto, dos dentes, da gengiva e dos lábios. Esse estudo orienta a forma, a cor e a espessura das lâminas.",
-        "Recursos digitais apoiam esse caminho, do planejamento do sorriso, que permite visualizar a proposta, à confecção das peças pelo sistema CAD/CAM, quando indicado. O resultado depende das condições de cada caso.",
+        "Proporções do rosto, dos dentes, da gengiva e dos lábios orientam a forma, a cor e a espessura das lâminas. O resultado depende das condições de cada caso.",
       ],
       media: "lentesPorcelana",
     },
@@ -961,7 +903,7 @@ export const treatments: Treatment[] = [
       },
       {
         title: "Instalação e ajustes",
-        text: "A placa é ajustada à mordida e revisada nas consultas seguintes.",
+        text: "A placa é ajustada à sua mordida na entrega.",
       },
     ],
     faq: [
@@ -984,18 +926,14 @@ export const treatments: Treatment[] = [
       kicker: "A placa oclusal",
       title: "Proteção feita sob medida.",
       paragraphs: [
-        "A placa é usada principalmente durante o sono e se encaixa sobre os dentes de uma arcada. Ela não elimina o hábito, mas ajuda a proteger os dentes enquanto o bruxismo é acompanhado.",
+        "A placa se encaixa sobre os dentes de uma das arcadas e não elimina o hábito: ela protege os dentes enquanto o bruxismo é acompanhado.",
       ],
       parts: [
-        { label: "Sob medida", text: "Confeccionada a partir do registro das suas arcadas." },
+        { label: "Uso noturno", text: "Usada principalmente durante o sono, quando o apertamento costuma acontecer." },
         { label: "Proteção", text: "Ajuda a proteger os dentes do desgaste causado pelo apertamento e pelo ranger." },
-        { label: "Acompanhamento", text: "É ajustada à mordida e revisada nas consultas seguintes." },
+        { label: "Revisão", text: "Leve a placa às consultas para conferir o ajuste e o desgaste." },
       ],
     },
-    care: [
-      "O bruxismo pode ter causas diversas; o dentista orienta, quando necessário, outros acompanhamentos.",
-      "Leve a placa às consultas de revisão para conferir o ajuste e o desgaste.",
-    ],
     related: ["ortodontia", "facetas-e-lentes", "protetores-esportivos"],
   },
   {
@@ -1004,7 +942,7 @@ export const treatments: Treatment[] = [
     category: "funcao",
     summary: "Protetores bucais sob medida para quem pratica esportes de contato ou impacto.",
     intro:
-      "O protetor bucal esportivo cobre a parte da frente dos dentes e tem como principal função reduzir o risco de fraturas dentárias e lesões na boca. Feito sob medida, protege dentes, rebordo e lábios em esportes de alto impacto, com contato ou quedas, como MMA, basquete, hóquei e rúgbi.",
+      "O protetor bucal esportivo cobre a parte da frente dos dentes e ajuda a reduzir o risco de fraturas dentárias e lesões na boca. Feito sob medida, protege dentes, rebordo e lábios em esportes de alto impacto, com contato ou quedas, como MMA, basquete, hóquei e rúgbi.",
     whenToTalk: [
       "Você ou seu filho praticam lutas, futebol, basquete ou outros esportes de contato.",
       "Usa aparelho ortodôntico e pratica atividades de impacto.",
@@ -1037,7 +975,7 @@ export const treatments: Treatment[] = [
       kicker: "Escolha do protetor",
       title: "O que um bom protetor precisa ter.",
       paragraphs: [
-        "Existem muitos tipos de protetor bucal. O protetor individualizado é confeccionado a partir do registro da arcada de quem vai usá-lo. Independentemente do modelo, ele deve ser:",
+        "Existem muitos tipos de protetor bucal. Qualquer que seja o modelo, ele deve ser:",
       ],
       parts: [
         { label: "Flexível", text: "Confortável durante todo o treino ou a competição." },
@@ -1062,7 +1000,7 @@ export const treatments: Treatment[] = [
     category: "clinica",
     summary: "Avaliação e remoção dos sisos quando há indicação clínica.",
     intro:
-      "Os terceiros molares, conhecidos como dentes do siso, costumam nascer entre os 16 e os 25 anos e são os últimos a aparecer na boca. Nem sempre há espaço para que nasçam na posição adequada. A extração pode ser indicada quando estão mal posicionados, quando falta espaço na arcada ou quando a erupção não se completa. A decisão depende de exame clínico e de imagem.",
+      "Os terceiros molares, os dentes do siso, costumam nascer entre os 16 e os 25 anos e são os últimos a aparecer na boca. A extração pode ser indicada quando estão mal posicionados, quando falta espaço na arcada ou quando a erupção não se completa, e a decisão depende de exame clínico e de imagem.",
     whenToTalk: [
       "Você sente dor ou inflamação na região do fundo da boca.",
       "Um exame de imagem mostrou sisos inclusos ou mal posicionados.",
@@ -1079,7 +1017,7 @@ export const treatments: Treatment[] = [
       },
       {
         title: "Indicação e planejamento",
-        text: "Com os exames, o dentista explica se a extração é indicada, o momento adequado e como o procedimento será feito.",
+        text: "O dentista explica se a extração é indicada, quando e como será feita.",
       },
       {
         title: "Procedimento e pós-operatório",
@@ -1106,7 +1044,7 @@ export const treatments: Treatment[] = [
         id: "incluso",
         title: "Siso incluso",
         paragraphs: [
-          "Quando permanece totalmente dentro do osso, o siso pode causar reabsorção do dente vizinho e quadros dolorosos, entre outras alterações. O acompanhamento por imagem ajuda a decidir o momento adequado de intervir.",
+          "Quando permanece totalmente dentro do osso, o siso pode causar reabsorção do dente vizinho e quadros dolorosos, entre outras alterações.",
         ],
       },
     ],
@@ -1123,10 +1061,7 @@ export const treatments: Treatment[] = [
       style: "split",
       kicker: "Os últimos dentes a nascer",
       title: "Nem sempre há espaço para os sisos.",
-      paragraphs: [
-        "Os terceiros molares chegam quando os outros dentes já ocupam a arcada. Sem espaço, podem nascer inclinados, ficar parcialmente cobertos pela gengiva ou permanecer dentro do osso.",
-        "Por isso a decisão parte dos exames: é a imagem que mostra a posição de cada siso e a relação com os dentes vizinhos.",
-      ],
+      paragraphs: ["Os sisos chegam quando os outros dentes já ocupam a arcada e, sem espaço, podem nascer inclinados."],
       parts: [
         { label: "Siso", text: "Inclinado na direção do dente vizinho e parcialmente dentro do osso." },
         { label: "Segundo molar", text: "O dente ao lado, que pode ser afetado quando o siso está mal posicionado." },
@@ -1134,7 +1069,6 @@ export const treatments: Treatment[] = [
       diagram: "siso",
     },
     care: [
-      "Nem todo siso precisa ser removido: a indicação é individual.",
       "Siga as orientações do pós-operatório e compareça ao retorno.",
       "Informe ao dentista condições de saúde e medicamentos em uso.",
     ],
@@ -1147,7 +1081,7 @@ export const treatments: Treatment[] = [
     category: "reabilitacao",
     summary: "Recuperação de osso para implantes ou de gengiva em casos de retração.",
     intro:
-      "Enxertos ósseos e gengivais são cirurgias que repõem tecido perdido. O enxerto ósseo aumenta a altura ou a espessura do osso para permitir a instalação de implantes. O enxerto gengival trata retrações da gengiva. O tipo de enxerto, o material e a sequência do tratamento dependem de cada situação.",
+      "Enxertos ósseos e gengivais são cirurgias que repõem tecido perdido: osso, para permitir a instalação de implantes, ou gengiva, em casos de retração. O tipo de enxerto, o material e a sequência do tratamento dependem de cada situação.",
     whenToTalk: [
       "Foi informado de que não há osso suficiente para um implante.",
       "Você tem retração gengival com raízes expostas.",
@@ -1169,11 +1103,6 @@ export const treatments: Treatment[] = [
     ],
     faq: [
       {
-        question: "O que é enxerto ósseo?",
-        answer:
-          "É um procedimento que aumenta a altura ou a espessura do osso em uma região, geralmente para permitir a instalação de implantes. Pode usar osso do próprio paciente ou biomateriais.",
-      },
-      {
         question: "O enxerto é sempre necessário antes do implante?",
         answer:
           "Não. Ele é considerado apenas quando o volume de osso não é suficiente para o planejamento proposto.",
@@ -1185,8 +1114,8 @@ export const treatments: Treatment[] = [
         id: "enxerto-osseo",
         title: "Enxerto ósseo",
         paragraphs: [
-          "Indicado quando houve perda óssea e o volume de osso não é suficiente para o implante. O material usado para preencher a região pode ser osso do próprio paciente ou biomateriais.",
-          "Em geral, o implante é instalado depois da cicatrização do enxerto, período que leva alguns meses e varia de caso para caso. Em algumas situações, é possível planejar o tratamento de forma a reduzir o número de procedimentos cirúrgicos.",
+          "Aumenta a altura ou a espessura do osso quando o volume não é suficiente para o implante. A região pode ser preenchida com osso do próprio paciente ou com biomateriais.",
+          "Em geral, o implante é instalado depois da cicatrização do enxerto, que leva alguns meses e varia de caso para caso. Em algumas situações, é possível reduzir o número de procedimentos cirúrgicos.",
         ],
         link: { href: "/tratamentos/implantes", label: "Implantes" },
       },
@@ -1194,8 +1123,7 @@ export const treatments: Treatment[] = [
         id: "enxerto-gengival",
         title: "Enxerto gengival",
         paragraphs: [
-          "Também conhecido como cirurgia plástica periodontal. A retração da gengiva pode ter causas como escovação com força excessiva, mau posicionamento dos dentes ou o próprio tipo de gengiva, e levar desde sensibilidade até a perda do dente.",
-          "O enxerto gengival trata a retração e também pode contribuir para um sorriso mais harmônico.",
+          "Também conhecido como cirurgia plástica periodontal. Trata a retração da gengiva, que pode levar de sensibilidade até a perda do dente, e também pode contribuir para um sorriso mais harmônico.",
         ],
         link: { href: "/tratamentos/periodontia#retracao-gengival", label: "Retração gengival" },
       },
@@ -1208,7 +1136,6 @@ export const treatments: Treatment[] = [
     },
     layout: { details: "compare", detailsFirst: true },
     care: [
-      "O tipo de enxerto, o material e a sequência do tratamento dependem de cada situação.",
       "O período de cicatrização varia de caso para caso e é acompanhado antes das próximas etapas.",
     ],
     related: ["implantes", "periodontia", "proteses"],
@@ -1219,7 +1146,7 @@ export const treatments: Treatment[] = [
     category: "estetica",
     summary: "Fotos, vídeos e software para planejar o sorriso antes de começar o tratamento.",
     intro:
-      "O planejamento digital do sorriso permite visualizar como o sorriso pode ficar depois do tratamento. Com ele, o profissional planeja as correções de acordo com os desejos, as necessidades e a personalidade de cada paciente, de forma individual. É um recurso usado sobretudo em tratamentos estéticos e reabilitações.",
+      "O planejamento digital do sorriso permite visualizar como o sorriso pode ficar depois do tratamento. O profissional planeja as correções de acordo com os desejos, as necessidades e a personalidade de cada paciente, sobretudo em tratamentos estéticos e reabilitações.",
     whenToTalk: [
       "Você pensa em mudar a forma, a cor ou a proporção dos dentes.",
       "Está avaliando facetas, lentes de contato ou uma reabilitação com próteses.",
@@ -1249,7 +1176,7 @@ export const treatments: Treatment[] = [
         id: "beneficios",
         title: "Diagnóstico e comunicação",
         paragraphs: [
-          "O planejamento digital enriquece o diagnóstico, aproxima a comunicação entre paciente e dentista, já que o paciente visualiza o projeto, e torna o tratamento mais previsível.",
+          "Enriquece o diagnóstico, aproxima a comunicação entre paciente e dentista, que discutem o mesmo projeto, e torna o tratamento mais previsível.",
         ],
       },
       {
@@ -1273,12 +1200,7 @@ export const treatments: Treatment[] = [
       {
         question: "Consigo ver como meu sorriso pode ficar antes do tratamento?",
         answer:
-          "O planejamento digital gera um projeto do sorriso a partir de fotos, vídeos e análise em software. Ele ajuda a visualizar e discutir a proposta, que depois é ajustada às condições clínicas reais.",
-      },
-      {
-        question: "Como posso melhorar a estética do meu sorriso?",
-        answer:
-          "Existem diferentes caminhos, como clareamento, facetas, ortodontia, implantes e plástica gengival. O ponto de partida é uma avaliação, e o planejamento digital pode ajudar a escolher e combinar as alternativas.",
+          "É para isso que ele serve: o projeto ajuda a visualizar e discutir a proposta, que depois é ajustada às condições clínicas reais.",
       },
     ],
     keywords: ["DSD", "simulação do sorriso", "estética", "tratamentos estéticos", "design do sorriso"],
@@ -1288,7 +1210,7 @@ export const treatments: Treatment[] = [
       care: "O que a simulação é, e o que não é",
       faq: "Dúvidas sobre o planejamento",
     },
-    layout: { steps: "timeline" },
+    layout: { steps: "timeline", details: "accordion" },
     related: ["facetas-e-lentes", "clareamento", "proteses"],
   },
   {

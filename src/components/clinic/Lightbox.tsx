@@ -28,7 +28,7 @@ export function useLightbox(items: ClinicImage[]) {
     />
   );
 
-  return { openAt, lightbox };
+  return { openAt, lightbox, isOpen: index !== null };
 }
 
 type DialogProps = {

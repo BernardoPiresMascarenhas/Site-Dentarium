@@ -26,7 +26,7 @@ export function TreatmentCard({ treatment, headingLevel = "h3", showCategory = t
   return (
     <Link
       href={`/tratamentos/${treatment.slug}`}
-      className={`group relative flex h-full flex-col gap-8 overflow-hidden rounded-[var(--radius-md)] border border-line bg-paper p-7 transition-[background-color,border-color,box-shadow] duration-500 ease-soft hover:border-taupe-soft hover:bg-taupe-tint hover:shadow-[0_24px_48px_-36px_rgba(107,93,85,0.6)] focus-visible:border-taupe-soft focus-visible:bg-taupe-tint sm:p-8 ${
+      className={`group relative flex h-full flex-col gap-8 overflow-hidden rounded-[var(--radius-md)] border border-line bg-paper p-7 transition-[background-color,border-color,box-shadow,transform] duration-500 ease-soft motion-safe:hover:-translate-y-1 hover:border-taupe-soft hover:bg-taupe-tint hover:shadow-[0_24px_48px_-36px_rgba(107,93,85,0.6)] focus-visible:border-taupe-soft focus-visible:bg-taupe-tint sm:p-8 ${
         wide ? "sm:flex-row sm:items-end sm:justify-between" : "justify-between"
       }`}
     >

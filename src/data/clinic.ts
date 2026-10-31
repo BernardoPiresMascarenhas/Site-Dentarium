@@ -98,11 +98,11 @@ export const clinic = {
     { label: "Sala de espera", text: "Poltronas acolchoadas, televisão e lavabo." },
     {
       label: "Consultórios equipados",
-      text: "Com televisão e mesa de atendimento com computador, para apresentar as possibilidades de tratamento.",
+      text: "Com televisão e mesa de atendimento com computador, para apresentar as alternativas de tratamento.",
     },
     {
       label: "Radiografia e tomografia",
-      text: "Sala de exames de imagem ao lado dos consultórios: o exame é feito no mesmo local, com o acompanhamento do seu dentista.",
+      text: "Sala de exames ao lado dos consultórios, com o acompanhamento do seu dentista.",
       equipment: true,
     },
     {

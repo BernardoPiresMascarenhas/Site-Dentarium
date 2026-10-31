@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { googleReviewLinks, publishedReviews } from "@/data/reviews";
 import { buttonClass } from "@/components/ui/Button";
 import { ReviewsCarousel } from "@/components/reviews/ReviewsCarousel";
+import { Reveal } from "@/components/ui/Reveal";
 
 /**
  * Depoimentos reais do Google (somente textos integrais). Links para o
@@ -16,7 +17,7 @@ export function Reviews() {
   return (
     <section aria-labelledby="avaliacoes-title" className="section overflow-x-clip bg-mist">
       <div className="container-site">
-        <div className="grid gap-5 lg:grid-cols-[1.45fr_0.75fr] lg:items-end lg:gap-12">
+        <Reveal className="grid gap-5 lg:grid-cols-[1.45fr_0.75fr] lg:items-end lg:gap-12">
           <div>
             <p className="kicker">O que dizem nossos pacientes</p>
             <h2
@@ -43,7 +44,7 @@ export function Reviews() {
               </a>
             )}
           </div>
-        </div>
+        </Reveal>
 
         <div className="mt-10 md:mt-12">
           <ReviewsCarousel items={publishedReviews} />

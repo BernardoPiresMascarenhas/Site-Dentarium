@@ -12,6 +12,7 @@ import {
 } from "@/data/clinic";
 import { images } from "@/data/images";
 import { ButtonAnchor, ButtonLink } from "@/components/ui/Button";
+import { Reveal, RevealImage } from "@/components/ui/Reveal";
 
 /** Encerramento com endereço, fachada e formas de contato verificadas como publicadas. */
 export function ContactBlock({ withPageLink = true }: { withPageLink?: boolean }) {
@@ -19,7 +20,7 @@ export function ContactBlock({ withPageLink = true }: { withPageLink?: boolean }
   return (
     <section aria-labelledby="contato-title" className="section bg-paper">
       <div className="container-site grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
-        <div>
+        <Reveal>
           <p className="kicker">Contato</p>
           <h2 id="contato-title" className="display-lg mt-5 max-w-[32rem]">
             Agende uma avaliação.
@@ -70,17 +71,19 @@ export function ContactBlock({ withPageLink = true }: { withPageLink?: boolean }
               Ver rotas
             </ButtonAnchor>
           </div>
-        </div>
+        </Reveal>
 
         <figure className="relative mx-auto w-full max-w-[28rem] lg:mr-0">
           <div className="arch overflow-hidden" style={{ backgroundColor: fachada.tone }}>
-            <Image
-              src={fachada.src}
-              alt={fachada.alt}
-              placeholder="blur"
-              sizes="(min-width: 1024px) 448px, 90vw"
-              className="block h-auto w-full"
-            />
+            <RevealImage>
+              <Image
+                src={fachada.src}
+                alt={fachada.alt}
+                placeholder="blur"
+                sizes="(min-width: 1024px) 448px, 90vw"
+                className="block h-auto w-full"
+              />
+            </RevealImage>
           </div>
           <figcaption className="mt-4 text-sm text-stone">{fachada.caption}, bairro Serra.</figcaption>
         </figure>

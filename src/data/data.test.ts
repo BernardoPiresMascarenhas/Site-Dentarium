@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { images, tourChapters } from "./images";
 import { clinic, mailtoHref, mapsUrl, telHref, whatsappHref } from "./clinic";
-import { cadcamSteps, faq, journey, sterilization, technologies, technologyFaq } from "./content";
+import { cadcamSteps, faq, journey, sterilization, technologies } from "./content";
 import { mainNav, staticRoutes } from "./navigation";
 import { team } from "./team";
 import { categories, featuredTreatments, getTreatment, treatmentWhatsappMessage, treatments } from "./treatments";
@@ -98,7 +98,6 @@ describe("conteúdo responsável", () => {
       ...(t.care ?? []),
     ]),
     ...technologies.map((t) => t.text),
-    ...technologyFaq.map((f) => f.answer),
     ...cadcamSteps.map((s) => s.text),
     ...sterilization.map((s) => s.text),
     ...faq.map((f) => f.answer),

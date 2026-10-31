@@ -16,6 +16,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CtaBand } from "@/components/clinic/CtaBand";
 import { WhatsappButton } from "@/components/clinic/WhatsappButton";
 import { TreatmentCard } from "@/components/treatments/TreatmentCard";
+import { Stagger, StaggerItem } from "@/components/ui/Reveal";
 import {
   CareAndFaqSection,
   DetailsSection,
@@ -49,9 +50,12 @@ export async function generateMetadata({ params }: PageProps<"/tratamentos/[slug
 
 /** Âncoras do índice "Nesta página", na ordem em que as seções aparecem. */
 function pageAnchors(t: Treatment) {
-  const details = t.detailsNav
-    ? [{ href: `#${t.detailsNav.id}`, label: t.detailsNav.label }]
-    : (t.details ?? []).map((d) => ({ href: `#${d.id}`, label: d.title }));
+  const details =
+    t.layout?.details === "accordion" && t.details?.length
+      ? [{ href: "#entenda-mais", label: "Entenda mais" }]
+      : t.detailsNav
+        ? [{ href: `#${t.detailsNav.id}`, label: t.detailsNav.label }]
+        : (t.details ?? []).map((d) => ({ href: `#${d.id}`, label: d.title }));
   const feature = t.feature ? [{ href: `#${t.feature.id}`, label: t.feature.kicker }] : [];
   const steps = [{ href: "#etapas", label: "Etapas" }];
   const middle = t.layout?.detailsFirst ? [...details, ...feature, ...steps] : [...feature, ...steps, ...details];
@@ -92,10 +96,6 @@ export default async function TreatmentPage({ params }: PageProps<"/tratamentos/
                 <dd className="mt-1 text-ink">{treatment.alsoKnownAs}</dd>
               </div>
             )}
-            <div>
-              <dt className="text-sm font-semibold text-graphite">Indicação</dt>
-              <dd className="mt-1 text-stone">Depende de avaliação individual com cirurgião-dentista.</dd>
-            </div>
           </dl>
         }
       >
@@ -141,13 +141,13 @@ export default async function TreatmentPage({ params }: PageProps<"/tratamentos/
             </Link>
           </div>
           {related.length > 0 && (
-            <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Stagger className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((t) => (
-                <li key={t.slug}>
+                <StaggerItem key={t.slug}>
                   <TreatmentCard treatment={t} />
-                </li>
+                </StaggerItem>
               ))}
-            </ul>
+            </Stagger>
           )}
           <nav aria-label="Outros tratamentos da área" className="mt-10 border-t border-taupe-soft pt-8">
             <p className="text-sm font-semibold text-clay">{category.name}</p>

@@ -6,6 +6,7 @@ import { Search, X } from "lucide-react";
 import { type CategoryId, categories, treatments } from "@/data/treatments";
 import { CategoryIcon } from "./CategoryIcon";
 import { TreatmentCard } from "./TreatmentCard";
+import { Stagger, StaggerItem } from "@/components/ui/Reveal";
 
 type Filter = CategoryId | "todos";
 
@@ -106,17 +107,17 @@ export function TreatmentExplorer() {
                 </h2>
                 <p className="mt-3 max-w-[18rem] text-[0.95rem] leading-relaxed text-stone">{g.description}</p>
               </div>
-              <ul className="grid gap-4 sm:grid-cols-2">
+              <Stagger className="grid gap-4 sm:grid-cols-2">
                 {g.items.map((t, i) => {
                   // Último item de uma linha ímpar ocupa a linha toda: sem célula vazia.
                   const wide = g.items.length % 2 === 1 && i === g.items.length - 1;
                   return (
-                    <li key={t.slug} className={wide ? "sm:col-span-2" : ""}>
+                    <StaggerItem key={t.slug} className={wide ? "sm:col-span-2" : ""}>
                       <TreatmentCard treatment={t} showCategory={false} wide={wide} position={{ index: i + 1, total: g.items.length }} />
-                    </li>
+                    </StaggerItem>
                   );
                 })}
-              </ul>
+              </Stagger>
             </section>
           ))}
         </div>

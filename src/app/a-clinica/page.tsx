@@ -8,7 +8,7 @@ import { PageHero } from "@/components/ui/PageHero";
 import { ClinicTour } from "@/components/clinic/ClinicTour";
 import { CtaBand } from "@/components/clinic/CtaBand";
 import { Founders } from "@/components/home/Founders";
-import { Reveal } from "@/components/ui/Reveal";
+import { Reveal, RevealImage, Stagger, StaggerItem } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "A Clínica",
@@ -39,7 +39,7 @@ export default function ClinicPage() {
       <PageHero
         crumbs={[{ href: "/a-clinica", label: "A Clínica" }]}
         title="Odontologia funcional e estética, no bairro Serra."
-        lede="A Dentarium reúne diferentes áreas da odontologia em um mesmo endereço, na região Centro-Sul de Belo Horizonte. Um lugar para tratar a saúde da boca com calma e com planejamento."
+        lede="Diferentes áreas da odontologia reunidas em um mesmo endereço, na região Centro-Sul de Belo Horizonte."
         aside={
           <div className="overflow-hidden rounded-[var(--radius-md)]" style={{ backgroundColor: parede.tone }}>
             <Image
@@ -67,14 +67,14 @@ export default function ClinicPage() {
               se sustenta sobre uma base saudável.
             </p>
           </div>
-          <ul className="grid gap-px overflow-hidden rounded-[var(--radius-md)] border border-line bg-line">
+          <Stagger className="grid gap-px overflow-hidden rounded-[var(--radius-md)] border border-line bg-line">
             {principles.map((p) => (
-              <li key={p.title} className="bg-ivory p-7 sm:p-8">
+              <StaggerItem key={p.title} className="bg-ivory p-7 sm:p-8">
                 <h3 className="display-md">{p.title}</h3>
                 <p className="prose-body mt-3">{p.text}</p>
-              </li>
+              </StaggerItem>
             ))}
-          </ul>
+          </Stagger>
         </div>
       </section>
 
@@ -88,8 +88,7 @@ export default function ClinicPage() {
               Ir além do esperado.
             </h2>
             <p className="prose-body mt-6 max-w-[26rem]">
-              Atendimento e resultados de excelência, com o paciente como foco da clínica. São esses
-              valores que a Dentarium quer consolidar como referência em odontologia em Belo Horizonte.
+              Os princípios que orientam o trabalho da Dentarium, consulta a consulta.
             </p>
           </div>
           <ul className="grid gap-x-12 sm:grid-cols-2">
@@ -111,19 +110,21 @@ export default function ClinicPage() {
               Pensada para a sua visita.
             </h2>
             <p className="prose-body mt-6 max-w-[26rem]">
-              Na região Centro-Sul de Belo Horizonte, no bairro {clinic.address.value.neighborhood}, a
-              clínica reúne consultórios, exames de imagem e laboratório no mesmo endereço.
+              Consultórios, exames de imagem e laboratório no mesmo endereço, no bairro{" "}
+              {clinic.address.value.neighborhood}.
             </p>
             {/* Foto de 300 px: exibida no tamanho original, sem ampliação. */}
             <figure className="mt-10 w-full" style={{ maxWidth: atendimento.src.width }}>
               <div className="overflow-hidden rounded-[var(--radius-md)]" style={{ backgroundColor: atendimento.tone }}>
-                <Image
-                  src={atendimento.src}
-                  alt={atendimento.alt}
-                  placeholder="blur"
-                  sizes="300px"
-                  className="block h-auto w-full"
-                />
+                <RevealImage>
+                  <Image
+                    src={atendimento.src}
+                    alt={atendimento.alt}
+                    placeholder="blur"
+                    sizes="300px"
+                    className="block h-auto w-full"
+                  />
+                </RevealImage>
               </div>
               <figcaption className="mt-3 text-sm text-stone">{atendimento.caption}</figcaption>
             </figure>
@@ -149,8 +150,7 @@ export default function ClinicPage() {
               </h2>
             </div>
             <p className="prose-body max-w-[28rem] lg:justify-self-end">
-              Da chegada ao consultório, a estrutura foi pensada para facilitar a sua visita.
-              Selecione uma foto para ampliar.
+              Da chegada ao consultório. Selecione uma foto para ampliar.
             </p>
           </div>
           <div className="mt-14 md:mt-20">

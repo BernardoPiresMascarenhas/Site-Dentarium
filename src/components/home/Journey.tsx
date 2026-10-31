@@ -23,7 +23,7 @@ export function Journey() {
             Do primeiro contato ao acompanhamento.
           </h2>
           <p className="prose-body mt-6 max-w-[26rem]">
-            Cada tratamento é decidido com você, depois de uma avaliação. Nenhuma etapa é pulada.
+            Quatro passos, do agendamento às revisões.
           </p>
         </div>
 

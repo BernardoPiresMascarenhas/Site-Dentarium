@@ -15,6 +15,12 @@ export type Technology = {
   stage: string;
   name: string;
   text: string;
+  /** Uma frase para a grade de recursos da página Tecnologia. */
+  short: string;
+  /** Seção da página Tecnologia que aprofunda o recurso. */
+  anchor: string;
+  /** Quando o recurso é usado (recursos de tratamento). */
+  use?: string;
   onHome?: boolean;
   /** Página do catálogo que aprofunda o assunto. */
   href?: string;
@@ -25,7 +31,9 @@ export const technologies: Technology[] = [
     id: "imagem",
     stage: "Diagnóstico",
     name: "Radiografia e tomografia",
-    text: "Exames de imagem mostram o que o exame clínico não alcança, como raízes, osso e dentes inclusos. A sala de exames fica ao lado dos consultórios, e o paciente faz o exame no mesmo local, acompanhado pelo seu dentista.",
+    text: "Exames de imagem mostram o que o exame clínico não alcança, como raízes, osso e dentes inclusos. A sala de exames fica ao lado dos consultórios, e o exame é feito no mesmo local, com o acompanhamento do seu dentista.",
+    short: "Exames de imagem feitos na própria clínica, ao lado dos consultórios.",
+    anchor: "diagnostico",
     onHome: true,
   },
   {
@@ -33,6 +41,8 @@ export const technologies: Technology[] = [
     stage: "Planejamento",
     name: "Planejamento digital do sorriso",
     text: "Fotos, vídeos e software para analisar as proporções do rosto e dos dentes e redesenhar o sorriso antes do tratamento, com o paciente participando das decisões.",
+    short: "Fotos, vídeos e software para projetar o sorriso antes do tratamento.",
+    anchor: "planejamento",
     onHome: true,
     href: "/tratamentos/planejamento-digital-do-sorriso",
   },
@@ -40,7 +50,9 @@ export const technologies: Technology[] = [
     id: "cadcam",
     stage: "Confecção de peças",
     name: "CAD/CAM",
-    text: "Sistema que combina escaneamento, desenho digital e fabricação para produzir restaurações, como coroas e facetas, a partir de um modelo virtual.",
+    text: "Escaneamento, desenho digital e fabricação de restaurações, como coroas e facetas, a partir de um modelo virtual.",
+    short: "Escaneamento, desenho e fabricação de restaurações a partir de um modelo virtual.",
+    anchor: "cad-cam",
     onHome: true,
     href: "/tecnologia#cad-cam",
   },
@@ -48,7 +60,10 @@ export const technologies: Technology[] = [
     id: "anestesia",
     stage: "Conforto",
     name: "Anestesia computadorizada",
-    text: "Equipamento digital que introduz o anestésico na gengiva de forma lenta e controlada, buscando uma aplicação mais confortável. Seu uso depende da indicação do profissional.",
+    text: "Equipamento digital que introduz o anestésico na gengiva de forma lenta e controlada, buscando uma aplicação mais confortável.",
+    short: "Anestésico aplicado de forma lenta e controlada.",
+    anchor: "conforto",
+    use: "Avaliada pelo profissional em cada caso.",
     onHome: true,
   },
   {
@@ -56,6 +71,9 @@ export const technologies: Technology[] = [
     stage: "Recurso complementar",
     name: "Laser",
     text: "Laser de baixa potência, usado como recurso complementar para favorecer a cicatrização, com ação anti-inflamatória e analgésica, sempre com indicação individual.",
+    short: "Laser de baixa potência como recurso complementar à cicatrização.",
+    anchor: "conforto",
+    use: "Complementa o tratamento principal, sem substituí-lo.",
     onHome: true,
     href: "/tratamentos/laserterapia",
   },
@@ -63,7 +81,9 @@ export const technologies: Technology[] = [
     id: "multidisciplinar",
     stage: "Planejamento",
     name: "Análise multidisciplinar",
-    text: "Depois da primeira consulta, os profissionais analisam o caso em conjunto, cada um em sua área, para chegar a um diagnóstico e a um plano de tratamento mais completos.",
+    text: "Depois da primeira consulta, os profissionais analisam o caso em conjunto, cada um em sua área, para chegar a um plano de tratamento mais completo.",
+    short: "Casos analisados em conjunto pelos profissionais de cada área.",
+    anchor: "planejamento",
     href: "/tratamentos/primeira-consulta",
   },
   {
@@ -71,13 +91,18 @@ export const technologies: Technology[] = [
     stage: "Tratamento de canal",
     name: "Recursos para endodontia",
     text: "Equipamentos de apoio ao tratamento de canal, como o localizador apical, que auxilia o profissional a determinar o comprimento dos canais durante o procedimento.",
+    short: "Localizador apical e outros apoios ao tratamento de canal.",
+    anchor: "conforto",
+    use: "Durante o tratamento de canal.",
     href: "/tratamentos/tratamento-de-canal",
   },
   {
     id: "laboratorio",
     stage: "Confecção de peças",
     name: "Laboratório de prótese",
-    text: "Cada sorriso e cada arcada têm características próprias. O laboratório dentro da clínica permite confeccionar as próteses considerando essa individualidade, com apoio do sistema CAD/CAM.",
+    text: "Próteses confeccionadas dentro da clínica, considerando as características de cada arcada, com apoio do sistema CAD/CAM.",
+    short: "Próteses confeccionadas dentro da própria clínica.",
+    anchor: "laboratorio",
     href: "/tratamentos/proteses#laboratorio",
   },
 ];
@@ -111,47 +136,27 @@ export const cadcamSteps = [
 
 export const cadcamMaterials = ["Cerâmica", "Resinas reforçadas", "Titânio", "Ligas metálicas"] as const;
 
-/** Biossegurança, conforme a seção "Esterilização" do site anterior. */
+/**
+ * Biossegurança, conforme a seção "Esterilização" do site anterior e a lista de
+ * estrutura. Sem citar normas ou certificações: a conformidade atual precisa
+ * ser confirmada com a clínica.
+ */
 export const sterilization = [
   {
-    title: "Sala e equipamentos",
-    text: "Após cada atendimento, toda a sala passa por um processo de assepsia, incluindo os equipamentos utilizados.",
+    title: "Ambientes e equipamentos",
+    text: "Após cada atendimento, a sala e os equipamentos usados passam por assepsia. Os demais ambientes são higienizados com frequência.",
   },
   {
     title: "Instrumentais",
-    text: "Os instrumentais são esterilizados de acordo com as normas de biossegurança.",
+    text: "Os instrumentais são esterilizados depois de cada uso.",
   },
   {
     title: "Proteção do material",
     text: "Depois da esterilização, o material recebe uma embalagem de proteção até o próximo uso.",
   },
   {
-    title: "Ambientes",
-    text: "Os ambientes são higienizados com frequência, para mais segurança e tranquilidade.",
-  },
-] as const;
-
-/** Perguntas da página Tecnologia — respostas sustentadas pelo material da clínica. */
-export const technologyFaq = [
-  {
-    question: "O que significa CAD/CAM?",
-    answer:
-      "É a sigla, em inglês, de Computer Aided Design / Computer Aided Manufacturing: desenho e fabricação assistidos por computador. O sistema digitaliza os dentes, permite projetar a restauração em software e produzi-la a partir desse projeto.",
-  },
-  {
-    question: "Quais materiais podem ser usados no CAD/CAM?",
-    answer:
-      "A tecnologia permite trabalhar com diferentes materiais, como cerâmica, resinas reforçadas, titânio e ligas metálicas, entre outros. O material de cada peça é definido no planejamento.",
-  },
-  {
-    question: "O escaneamento substitui a moldagem?",
-    answer:
-      "Em muitos casos, sim: a digitalização dispensa a moldagem convencional, o que torna essa etapa mais confortável. A indicação depende do tratamento planejado.",
-  },
-  {
-    question: "Como funciona a anestesia computadorizada?",
-    answer:
-      "Um equipamento digital controla a aplicação e introduz o anestésico lentamente na gengiva, com mais precisão. O objetivo é tornar a aplicação mais confortável. O uso é avaliado pelo profissional em cada caso.",
+    title: "Áreas de apoio",
+    text: "Espaços dedicados aos materiais e ao preparo de cada atendimento.",
   },
 ] as const;
 
@@ -160,7 +165,7 @@ export const history = {
   title: "A união de dois dentistas e uma mesma filosofia de trabalho.",
   paragraphs: [
     "A Dentarium nasceu da união profissional dos dentistas Gabriel Faria Aiala e Denise Ligório Fialho Aiala, alinhados nos mesmos valores e na mesma filosofia de trabalho.",
-    "Desde o início, a inovação é um dos principais pilares da clínica, ao lado do atendimento multidisciplinar, com diferentes especialidades analisando cada caso em conjunto, e da atenção individualizada a cada paciente.",
+    "Desde o início, a inovação é um dos pilares da clínica, ao lado do atendimento multidisciplinar e da atenção a cada paciente.",
   ],
 } as const;
 
@@ -196,31 +201,23 @@ export const attributes = [
 export const journey = [
   {
     title: "Entre em contato",
-    text: "Ligue ou envie um e-mail para combinar o melhor horário. A recepção explica como funciona a primeira consulta.",
+    text: "Pelo WhatsApp, por telefone ou por e-mail, a recepção combina o melhor horário com você.",
   },
   {
     title: "Avaliação clínica",
-    text: "Você conta o que motivou a visita e passa por um exame completo. Exames complementares são pedidos apenas quando necessários.",
+    text: "Você conta o que motivou a visita e passa pelo exame clínico. Exames complementares, só quando necessários.",
   },
   {
     title: "Planejamento individual",
-    text: "O dentista explica o que foi observado e apresenta as alternativas, com etapas, cuidados e o que esperar de cada uma.",
+    text: "O dentista explica o que foi observado e apresenta as alternativas, com o que esperar de cada uma.",
   },
   {
     title: "Acompanhamento",
-    text: "Durante e depois do tratamento, as consultas de revisão ajudam a manter a saúde da boca ao longo do tempo.",
+    text: "Consultas de revisão, durante e depois do tratamento, para manter a saúde da boca.",
   },
 ] as const;
 
-// Espaço e hífen não separáveis: o número nunca quebra no meio da linha.
-const unbreakable = (text: string) => text.replace(/ /g, "\u00a0").replace(/-/g, "\u2011");
-const phoneList = clinic.phones.value.map((p) => unbreakable(p.display)).join(" ou ");
-
 export const faq = [
-  {
-    question: "Como agendar uma avaliação?",
-    answer: `Pelo WhatsApp ${unbreakable(clinic.whatsapp.value.display)}, pelos telefones ${phoneList} ou pelo e-mail ${clinic.email.value}. A clínica atende de segunda a sexta, das 8h às 18h30. O horário fica confirmado quando a recepção responder.`,
-  },
   {
     question: "Onde fica a clínica?",
     answer: `Na ${clinic.address.value.street}, no bairro ${clinic.address.value.neighborhood}, em Belo Horizonte. A clínica conta com estacionamento próprio; se precisar, confirme a vaga ao agendar.`,
@@ -239,11 +236,6 @@ export const faq = [
     question: "O que levar à primeira consulta?",
     answer:
       "Um documento de identificação e, se tiver, exames e radiografias recentes. Também ajuda informar os medicamentos que você usa. Ao agendar, pergunte se há alguma orientação adicional.",
-  },
-  {
-    question: "Como funciona a primeira consulta?",
-    answer:
-      "Começa com uma conversa e a anamnese, um levantamento da sua saúde geral, seguidas de exame clínico e, quando necessário, fotografias. Depois, os profissionais analisam o caso em conjunto, e um retorno é marcado para apresentar o diagnóstico e o plano de tratamento.",
   },
   {
     question: "Vocês atendem crianças?",

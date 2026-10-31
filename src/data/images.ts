@@ -37,9 +37,9 @@ import primeiraConsulta from "../../public/images/dentarium/primeira-consulta.pn
  * - A Clínica: logoParede (abertura), fundadores (história), consultorioAtendimento
  *   (estrutura), tour (fachada, jardim, estacionamento, recepção, salas de
  *   espera, consultórios, apoio clínico).
- * - Tecnologia: salaApoio (abertura), tomografia (exames de imagem),
- *   consultorioVidro (planejamento digital), atendimentoProcedimento
- *   (atendimento).
+ * - Tecnologia: salaApoio (abertura); tomografia + atendimentoProcedimento
+ *   (diagnóstico por imagem); primeiraConsulta + consultorioVidro
+ *   (planejamento). primeiraConsulta também aparece na página do tratamento.
  * - Equipe: gabriel, denise, fernanda. Contato: sem fotos.
  * - Tratamentos: primeiraConsulta apoia a página de primeira consulta. As
  *   ilustrações dos tratamentos ficam em treatmentMedia.ts.
@@ -269,19 +269,19 @@ export const tourChapters: { id: string; title: string; text: string; photos: Cl
   {
     id: "recepcao",
     title: "Recepção",
-    text: "A recepção acolhe pacientes de todas as idades e organiza cada horário com atenção.",
+    text: "Onde cada visita começa, para pacientes de todas as idades.",
     photos: [images.recepcaoFamilia],
   },
   {
     id: "espera",
     title: "Espera",
-    text: "Poltronas acolchoadas, televisão e lavabo: um lugar para aguardar com tranquilidade.",
+    text: "Um lugar para aguardar com tranquilidade.",
     photos: [images.salaEspera, images.salaEsperaPoltronas],
   },
   {
     id: "consultorios",
     title: "Consultórios",
-    text: "Ambientes claros e organizados, com televisão e mesa de atendimento com computador para apresentar as possibilidades de tratamento.",
+    text: "Ambientes claros e organizados, com mesa de atendimento para conversar sobre o tratamento.",
     photos: [images.consultorioRoxo, images.consultorioOdontologico],
   },
   {

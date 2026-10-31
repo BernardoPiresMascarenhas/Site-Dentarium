@@ -21,7 +21,7 @@ export default function TeamPage() {
       <PageHero
         crumbs={[{ href: "/equipe", label: "Equipe" }]}
         title="Profissionais da Dentarium."
-        lede="Conheça quem cuida do seu sorriso: os fundadores da clínica e a odontopediatra do Dentarium Kids, com seus registros no conselho e as formações divulgadas."
+        lede="Os fundadores da clínica e a odontopediatra do Dentarium Kids, com registro no conselho e formação."
       />
 
       <section aria-label="Profissionais" className="pt-6 pb-20 md:pb-28">
