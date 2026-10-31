@@ -229,7 +229,8 @@ test.describe("interações", () => {
 
     await form.getByLabel("WhatsApp").fill("31900000000");
     await expect(form.getByLabel("WhatsApp")).toHaveValue("(31) 90000-0000");
-    await form.getByLabel("Tratamento de interesse").selectOption("Ortodontia");
+    await form.getByRole("combobox", { name: /Tratamento de interesse/ }).click();
+    await form.getByRole("option", { name: "Ortodontia" }).click();
     await submit.click();
 
     const href = await page.evaluate(() => (window as unknown as { __mailto: string }).__mailto);
@@ -244,6 +245,54 @@ test.describe("interações", () => {
     await expect(status).toContainText("Mensagem pronta no seu aplicativo de e-mail");
     await expect(status).toContainText("só fica marcado quando a recepção responder");
     await expect(status).not.toContainText(/agendad[oa]|confirmad[oa]|recebid[oa]|enviad[oa] com sucesso/i);
+  });
+
+  test("seletor de tratamento rola dentro do painel e funciona por teclado", async ({ page }) => {
+    await page.goto("/contato");
+    const form = page.locator("#agendar");
+    const combo = form.getByRole("combobox", { name: /Tratamento de interesse/ });
+    await expect(combo).toHaveAttribute("aria-expanded", "false");
+    await expect(combo).toContainText("Avaliação geral (ainda não sei)");
+
+    // Clique abre o painel; a lista rola dentro dele, sem mover a página.
+    await combo.click();
+    const list = form.getByRole("listbox");
+    await expect(list).toBeVisible();
+    await expect(combo).toHaveAttribute("aria-expanded", "true");
+    const scrolls = await list.evaluate((el) => el.scrollHeight > el.clientHeight);
+    expect(scrolls).toBe(true);
+    await list.hover();
+    const pageY = await page.evaluate(() => scrollY);
+    await page.mouse.wheel(0, 400);
+    await expect.poll(() => list.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+    expect(await page.evaluate(() => scrollY)).toBe(pageY);
+    await list.getByRole("option", { name: "Laserterapia" }).click();
+    await expect(list).toBeHidden();
+    await expect(combo).toContainText("Laserterapia");
+    await expect(combo).toBeFocused();
+
+    // Teclado: setas, digitação e Enter; Esc fecha sem mudar.
+    await combo.press("ArrowDown");
+    await expect(list).toBeVisible();
+    await page.keyboard.press("Home");
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
+    await expect(combo).not.toContainText("Laserterapia");
+    const chosen = (await combo.textContent())!.trim();
+    await expect(form.locator('[role="option"][aria-selected="true"]')).toHaveText(chosen);
+    await combo.press("Enter");
+    await page.keyboard.type("orto");
+    await page.keyboard.press("Enter");
+    await expect(combo).toContainText("Ortodontia");
+    await combo.press("Enter");
+    await page.keyboard.press("Escape");
+    await expect(list).toBeHidden();
+    await expect(combo).toContainText("Ortodontia");
+
+    // Clique fora fecha.
+    await combo.click();
+    await page.getByRole("heading", { level: 1 }).click();
+    await expect(list).toBeHidden();
   });
 
   test("formulário monta a mensagem no WhatsApp sem declarar agendamento feito", async ({ page }) => {
@@ -483,6 +532,38 @@ test.describe("rolagem suave", () => {
   });
 });
 
+test.describe("compartilhamento", () => {
+  test("link tem título, texto e imagem de pré-visualização", async ({ page, request }) => {
+    await page.goto("/");
+    const meta = (sel: string) => page.locator(`meta[${sel}]`).getAttribute("content");
+    expect(await meta('property="og:title"')).toBe("Clínica Dentarium | Odontologia funcional e estética em Belo Horizonte");
+    expect(await meta('property="og:description"')).toContain("Odontologia funcional e estética no bairro Serra");
+    expect(await meta('property="og:url"')).toBe("https://site-dentarium.vercel.app");
+    expect(await meta('name="twitter:card"')).toBe("summary_large_image");
+    expect(await meta('property="og:image:width"')).toBe("1200");
+    expect(await meta('property="og:image:alt"')).toContain("Clínica Dentarium");
+    const image = new URL((await meta('property="og:image"'))!);
+    expect(image.origin).toBe("https://site-dentarium.vercel.app");
+    const res = await request.get(image.pathname + image.search);
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toBe("image/jpeg");
+    expect((await res.body()).length).toBeLessThan(300_000);
+  });
+});
+
+test.describe("privacidade", () => {
+  test("aviso descreve o formulário com WhatsApp e e-mail e o mapa opcional", async ({ page }) => {
+    await page.goto("/privacidade");
+    const main = page.getByRole("main");
+    await expect(main.getByText("Documento demonstrativo")).toBeVisible();
+    await expect(main.getByText(/o WhatsApp abre com a mensagem pronta/)).toBeVisible();
+    await expect(main.getByText(/nada é enviado até você confirmar o envio/)).toBeVisible();
+    await expect(main.getByText(/não agenda uma consulta/)).toBeVisible();
+    await expect(main.getByText(/só é carregado quando você clica em “Mostrar mapa interativo”/)).toBeVisible();
+    await expect(main.getByText(/apenas monta uma mensagem no aplicativo de e-mail/)).toHaveCount(0);
+  });
+});
+
 test.describe("convênios", () => {
   test("contato mostra os convênios entre o formulário e o mapa", async ({ page }) => {
     await page.goto("/contato");
@@ -491,7 +572,7 @@ test.describe("convênios", () => {
       const img = section.getByRole("img", { name });
       await img.scrollIntoViewIfNeeded();
       await expect(img).toBeVisible();
-      expect(await img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+      await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
     }
     const order = await page.evaluate(() =>
       ["#agendar", "#convenios-title", "#como-chegar"].map((s) => document.querySelector(s)!.getBoundingClientRect().top),

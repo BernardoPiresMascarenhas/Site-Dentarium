@@ -81,6 +81,12 @@ test.describe("fotografias", () => {
         }
       });
       await page.waitForLoadState("networkidle");
+      // Imagens lazy pedidas no fim da rolagem podem ainda estar terminando.
+      await page
+        .waitForFunction(() => [...document.images].every((img) => !img.checkVisibility() || img.complete), undefined, {
+          timeout: 5000,
+        })
+        .catch(() => {});
       const broken = await page.evaluate(() =>
         [...document.images]
           .filter((img) => img.checkVisibility() && (!img.complete || img.naturalWidth === 0))

@@ -259,6 +259,18 @@
   }
 }
 
+/* Painel do seletor de tratamento: surge logo abaixo do campo. */
+.select-panel:not([hidden]) {
+  animation: select-in 0.22s var(--ease-out);
+}
+
+@keyframes select-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
 @keyframes panel-in {
   from {
     transform: translateX(100%);

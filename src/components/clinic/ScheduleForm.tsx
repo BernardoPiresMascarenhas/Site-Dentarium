@@ -1,14 +1,20 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronDown, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 import { SCHEDULE_SUBJECT, clinic, mailtoHref, whatsappHref } from "@/data/clinic";
 import { categories, treatmentsByCategory } from "@/data/treatments";
 import { buttonClass } from "@/components/ui/Button";
+import { TreatmentSelect, type SelectGroup } from "./TreatmentSelect";
 
 const GENERAL = "Avaliação geral (ainda não sei)";
 const MESSAGE_MAX = 400;
+
+const treatmentGroups: SelectGroup[] = [
+  { label: "", options: [GENERAL] },
+  ...categories.map((c) => ({ label: c.name, options: treatmentsByCategory(c.id).map((t) => t.name) })),
+];
 
 type Channel = "whatsapp" | "email";
 type Errors = Partial<Record<"nome" | "whatsapp", string>>;
@@ -130,26 +136,14 @@ export function ScheduleForm() {
         />
       </Field>
 
-      <Field label="Tratamento de interesse" htmlFor="tratamento">
-        <div className="relative">
-          <select id="tratamento" name="tratamento" defaultValue={GENERAL} className={`${inputClass(false)} appearance-none pr-11`}>
-            <option value={GENERAL}>{GENERAL}</option>
-            {categories.map((c) => (
-              <optgroup key={c.id} label={c.name}>
-                {treatmentsByCategory(c.id).map((t) => (
-                  <option key={t.slug} value={t.name}>
-                    {t.name}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-          <ChevronDown
-            aria-hidden
-            strokeWidth={1.75}
-            className="pointer-events-none absolute top-1/2 right-4 mt-1 size-4 -translate-y-1/2 text-clay"
-          />
-        </div>
+      <Field label="Tratamento de interesse" htmlFor="tratamento" labelId="tratamento-rotulo">
+        <TreatmentSelect
+          id="tratamento"
+          name="tratamento"
+          labelId="tratamento-rotulo"
+          defaultValue={GENERAL}
+          groups={treatmentGroups}
+        />
       </Field>
 
       <Field label="Mensagem" optional htmlFor="mensagem">
@@ -224,6 +218,7 @@ function inputClass(invalid: boolean) {
 function Field({
   label,
   htmlFor,
+  labelId,
   optional,
   hint,
   error,
@@ -231,6 +226,8 @@ function Field({
 }: {
   label: string;
   htmlFor: string;
+  /** Para controles que não são <input>: o rótulo é ligado por aria-labelledby. */
+  labelId?: string;
   optional?: boolean;
   hint?: string;
   error?: string;
@@ -238,7 +235,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={htmlFor} className="flex items-baseline justify-between gap-3 text-sm font-semibold text-ink">
+      <label id={labelId} htmlFor={htmlFor} className="flex items-baseline justify-between gap-3 text-sm font-semibold text-ink">
         {label}
         {optional && <span className="text-xs font-normal text-stone">opcional</span>}
       </label>

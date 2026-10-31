@@ -184,7 +184,7 @@ export const images = {
   fachada: {
     id: "fachada",
     src: fachada,
-    alt: "Fachada do prédio da Dentarium, com letreiro, vidros espelhados e árvores ao redor.",
+    alt: "Fachada da Dentarium, com letreiro, vidros espelhados e árvores ao redor.",
     caption: "Fachada na Rua do Ouro",
     focus: "50% 40%",
     tone: "#b9c6cf",
@@ -257,13 +257,13 @@ export const tourChapters: { id: string; title: string; text: string; photos: Cl
   {
     id: "chegada",
     title: "Chegada",
-    text: "O prédio na Rua do Ouro, com um jardim que recebe luz natural.",
+    text: "A clínica na Rua do Ouro, com um jardim que recebe luz natural.",
     photos: [images.fachada, images.jardimExterno],
   },
   {
     id: "estacionamento",
     title: "Estacionamento",
-    text: "Estacionamento próprio na entrada do prédio, para chegar com mais comodidade.",
+    text: "Estacionamento próprio na entrada da clínica, para chegar com mais comodidade.",
     photos: [images.estacionamento],
   },
   {

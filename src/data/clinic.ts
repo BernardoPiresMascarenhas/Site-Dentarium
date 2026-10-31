@@ -93,7 +93,7 @@ export const clinic = {
    * ser confirmada (ver docs/REVISAO_CONTEUDO_DENTARIUM.md).
    */
   facilities: fromPublicSite([
-    { label: "Estacionamento próprio", text: "Vagas na entrada do prédio, na Rua do Ouro." },
+    { label: "Estacionamento próprio", text: "Vagas na entrada da clínica, na Rua do Ouro." },
     { label: "Plataforma elevatória", text: "Acesso para pessoas com mobilidade reduzida." },
     { label: "Sala de espera", text: "Poltronas acolchoadas, televisão e lavabo." },
     {

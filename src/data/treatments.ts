@@ -505,7 +505,7 @@ export const treatments: Treatment[] = [
     alsoKnownAs: "Endodontia",
     category: "clinica",
     featured: true,
-    summary: "Endodontia: tratamento do interior do dente quando a polpa está inflamada ou infectada.",
+    summary: "Tratamento do interior do dente quando a polpa está inflamada ou infectada.",
     intro:
       "A endodontia, conhecida como tratamento de canal, cuida da polpa, o tecido no interior do dente. Quando ela inflama ou infecciona, por exemplo após uma cárie profunda ou uma fratura, o tratamento remove o tecido comprometido, limpa e sela os canais, buscando preservar o dente.",
     whenToTalk: [

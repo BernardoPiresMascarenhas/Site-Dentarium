@@ -22,6 +22,10 @@ const manrope = Manrope({
   display: "swap",
 });
 
+const shareTitle = `${clinic.name} | ${clinic.tagline} em Belo Horizonte`;
+const shareDescription =
+  "Odontologia funcional e estética no bairro Serra, em Belo Horizonte. Conheça a clínica, os tratamentos e solicite sua avaliação pelo WhatsApp.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -33,7 +37,16 @@ export const metadata: Metadata = {
   // Demonstração: não indexar para não ser confundida com o site oficial.
   robots: { index: false, follow: false, nocache: true },
   applicationName: clinic.name,
-  openGraph: { type: "website", locale: "pt_BR", siteName: clinic.name },
+  // Pré-visualização do link compartilhado; a imagem vem de opengraph-image.tsx.
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    siteName: clinic.name,
+    url: "/",
+    title: shareTitle,
+    description: shareDescription,
+  },
+  twitter: { card: "summary_large_image", title: shareTitle, description: shareDescription },
 };
 
 export const viewport: Viewport = {
