@@ -11,6 +11,7 @@ import {
 } from "@/data/treatments";
 import { treatmentMedia } from "@/data/treatmentMedia";
 import { scheduleCta } from "@/data/navigation";
+import { shareImage } from "@/data/share";
 import { PageHero } from "@/components/ui/PageHero";
 import { ButtonLink } from "@/components/ui/Button";
 import { CtaBand } from "@/components/clinic/CtaBand";
@@ -43,7 +44,8 @@ export async function generateMetadata({ params }: PageProps<"/tratamentos/[slug
     openGraph: {
       title: `${treatment.name} | Clínica Dentarium`,
       description,
-      ...(media && { images: [{ url: treatmentMedia[media].src.src, alt: treatmentMedia[media].alt }] }),
+      // O openGraph da página substitui o do layout: sem ilustração, usa a imagem padrão.
+      images: media ? [{ url: treatmentMedia[media].src.src, alt: treatmentMedia[media].alt }] : [shareImage],
     },
   };
 }

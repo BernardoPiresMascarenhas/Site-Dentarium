@@ -7,6 +7,7 @@ import { HashScroll } from "@/components/layout/HashScroll";
 import { MotionProvider } from "@/components/ui/MotionProvider";
 import { clinic } from "@/data/clinic";
 import { siteUrl } from "@/data/navigation";
+import { shareImage } from "@/data/share";
 import "./globals.css";
 
 const newsreader = Newsreader({
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
   // Demonstração: não indexar para não ser confundida com o site oficial.
   robots: { index: false, follow: false, nocache: true },
   applicationName: clinic.name,
-  // Pré-visualização do link compartilhado; a imagem vem de opengraph-image.tsx.
+  // Pré-visualização do link compartilhado (imagem em src/data/share.ts).
   openGraph: {
     type: "website",
     locale: "pt_BR",
@@ -45,8 +46,9 @@ export const metadata: Metadata = {
     url: "/",
     title: shareTitle,
     description: shareDescription,
+    images: [shareImage],
   },
-  twitter: { card: "summary_large_image", title: shareTitle, description: shareDescription },
+  twitter: { card: "summary_large_image", title: shareTitle, description: shareDescription, images: [shareImage] },
 };
 
 export const viewport: Viewport = {

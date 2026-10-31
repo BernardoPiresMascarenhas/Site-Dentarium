@@ -48,7 +48,7 @@ Vieram do site anterior da clínica. Em 2026-10-31, o responsável pelo projeto 
 ## 4. Identidade visual
 
 - [x] Logomarca oficial aplicada no header, no menu mobile e no rodapé (`public/images/dentarium/logo-dentarium-2.png`, configurada em `src/data/brand.ts`). O favicon (`src/app/icon.png`) é o recorte do símbolo desse mesmo arquivo, sem alterações.
-- [ ] **Obter a logo em SVG** (ou PNG com pelo menos 944 × 240 px). O arquivo atual tem 236 × 60 px e fica levemente suave em telas retina. Para trocar, coloque o arquivo novo em `public/images/dentarium/` e altere apenas o `import` em `src/data/brand.ts`. A marca não deve ser vetorizada nem redesenhada a partir do PNG.
+- [ ] **Obter a logo em SVG** (ou PNG com pelo menos 944 × 240 px). O arquivo atual tem 236 × 60 px e fica levemente suave em telas retina. Para trocar, coloque o arquivo novo em `public/images/dentarium/` e altere apenas o `import` em `src/data/brand.ts`. Com a logo nova, refaça também a imagem de compartilhamento (`public/og/dentarium-compartilhamento-v2.png`, hoje montada a partir do PNG de 236 × 60 px ampliado) com um nome novo (`-v3`) e atualize `src/data/share.ts`. A marca não deve ser vetorizada nem redesenhada a partir do PNG.
 - [ ] Confirmar com a clínica a paleta derivada da marca: grafite `#5E625E`, argila `#7A5C4F` e rosado `#BCADA7` (ver `src/app/globals.css`).
 - [ ] O símbolo da logo é semitransparente: mantê-la sempre sobre fundos claros. Se a clínica tiver uma versão para fundo escuro, ela pode ser adicionada em `src/data/brand.ts`.
 
