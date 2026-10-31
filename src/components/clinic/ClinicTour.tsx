@@ -2,7 +2,6 @@
 
 import { motion } from "motion/react";
 
-import { publicFacilities } from "@/data/clinic";
 import { tourChapters, tourImages } from "@/data/images";
 import { PhotoTile, useLightbox } from "./Lightbox";
 
@@ -44,16 +43,6 @@ export function ClinicTour() {
                 </p>
                 <h3 className="display-md mt-3">{chapter.title}</h3>
                 <p className="prose-body mt-3 max-w-[22rem]">{chapter.text}</p>
-                {chapter.id === "chegada" && (
-                  <ul className="mt-6 space-y-2.5 border-t border-taupe-soft pt-5 text-[0.95rem] text-ink">
-                    {publicFacilities().map((f) => (
-                      <li key={f} className="flex items-center gap-3">
-                        <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-clay" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
 
               <div

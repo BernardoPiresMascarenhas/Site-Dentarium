@@ -2,11 +2,13 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
+import { images, tourChapters } from "./images";
 import { clinic, mailtoHref, mapsUrl, telHref, whatsappHref } from "./clinic";
-import { faq, journey } from "./content";
+import { cadcamSteps, faq, journey, sterilization, technologies, technologyFaq } from "./content";
 import { mainNav, staticRoutes } from "./navigation";
 import { team } from "./team";
-import { categories, featuredTreatments, getTreatment, treatments } from "./treatments";
+import { categories, featuredTreatments, getTreatment, treatmentWhatsappMessage, treatments } from "./treatments";
+import { reviewOnlyMedia, treatmentMedia } from "./treatmentMedia";
 
 const SRC = join(__dirname, "..");
 
@@ -74,6 +76,9 @@ describe("conteúdo responsável", () => {
     /garantid[oa]/i,
     /sem dor/i,
     /1% das clínicas/i,
+    /indolor/i,
+    /ISO 9002/i,
+    /perfeit[oa]/i,
     /preços? especia/i,
     /consulta grátis/i,
     /mais rápido/i,
@@ -83,7 +88,19 @@ describe("conteúdo responsável", () => {
   ];
 
   const texts = [
-    ...treatments.flatMap((t) => [t.summary, t.intro, ...t.whenToTalk, ...t.overview.map((o) => o.text), ...t.faq.map((f) => f.answer)]),
+    ...treatments.flatMap((t) => [
+      t.summary,
+      t.intro,
+      ...t.whenToTalk,
+      ...t.overview.map((o) => o.text),
+      ...t.faq.map((f) => f.answer),
+      ...(t.details ?? []).flatMap((d) => [...d.paragraphs, ...(d.points ?? [])]),
+      ...(t.care ?? []),
+    ]),
+    ...technologies.map((t) => t.text),
+    ...technologyFaq.map((f) => f.answer),
+    ...cadcamSteps.map((s) => s.text),
+    ...sterilization.map((s) => s.text),
     ...faq.map((f) => f.answer),
     ...journey.map((j) => j.text),
   ];
@@ -96,12 +113,23 @@ describe("conteúdo responsável", () => {
 });
 
 describe("contato", () => {
-  it("não ativa WhatsApp sem número confirmado", () => {
-    expect(clinic.whatsappVerified).toBeNull();
-    expect(whatsappHref()).toBeNull();
-    for (const { file, text } of allSource) {
-      expect(text, file).not.toMatch(/wa\.me\/\d/);
-    }
+  it("gera o link do WhatsApp com o número confirmado e a mensagem pronta", () => {
+    expect(clinic.whatsapp.value.display).toBe("(31) 99808-3126");
+    expect(clinic.whatsapp.status).toBe("confirmed");
+    const general = whatsappHref();
+    expect(general.startsWith("https://wa.me/5531998083126?text=")).toBe(true);
+    expect(decodeURIComponent(general.split("text=")[1])).toBe(
+      "Olá! Gostaria de saber mais sobre os atendimentos da Clínica Dentarium.",
+    );
+    const implantes = treatments.find((t) => t.slug === "implantes")!;
+    expect(treatmentWhatsappMessage(implantes)).toBe(
+      "Olá! Gostaria de informações sobre o tratamento de implantes dentários e como agendar uma avaliação.",
+    );
+  });
+
+  it("publica o horário de segunda a sexta, com fim de semana fechado", () => {
+    expect(clinic.hours.value).toBe("Segunda a sexta, das 8h às 18h30");
+    expect(clinic.schedule.map((s) => s.time)).toEqual(["08h às 18h30", "Fechado", "Fechado"]);
   });
 
   it("gera links tel:, mailto: e de mapa válidos", () => {
@@ -112,22 +140,37 @@ describe("contato", () => {
     expect(mapsUrl()).toMatch(/^https:\/\/www\.google\.com\/maps\/search\/\?api=1&query=Rua%20do%20Ouro/);
   });
 
+  it("usa cada ilustração de tratamento em um único lugar e credita as licenciadas", () => {
+    const used = treatments.flatMap((t) => [t.feature?.media, ...(t.details ?? []).map((d) => d.media)].filter(Boolean));
+    expect(new Set(used).size).toBe(used.length);
+    for (const key of Object.keys(treatmentMedia)) expect(used).toContain(key);
+    for (const m of Object.values(treatmentMedia)) {
+      if (m.origin === "licenciada") expect("credit" in m && m.credit?.license).toBeTruthy();
+    }
+  });
+
+  it("não importa as imagens reservadas para revisão em nenhuma página", () => {
+    const code = sourceFiles(SRC)
+      .filter((f) => /\.tsx?$/.test(f) && !f.endsWith("treatmentMedia.ts") && !f.endsWith(".test.ts"))
+      .map((f) => readFileSync(f, "utf8"))
+      .join("\n");
+    for (const m of reviewOnlyMedia) {
+      const name = m.file.split("/").pop()!;
+      expect(code).not.toContain(name);
+    }
+  });
+
   it("marca os dados do site anterior como não confirmados", () => {
     expect(clinic.address.status).toBe("public-site-unconfirmed");
-    expect(clinic.hours.status).toBe("public-site-unconfirmed");
     for (const m of team) expect(m.status).not.toBe("confirmed");
   });
 });
 
 describe("imagens", () => {
-  it("nunca importa fotos restritas em componentes", () => {
-    for (const { file, text } of allSource) {
-      if (file.endsWith(join("data", "images.ts"))) {
-        expect(text).not.toMatch(/import .* from ".*(atendimento-procedimento|recepcao-familia|tomografia)\.webp"/);
-        continue;
-      }
-      expect(text, file).not.toMatch(/atendimento-procedimento|recepcao-familia|tomografia\.(webp|png)/);
-    }
+  it("publica as fotos do site anterior com autorização informada", () => {
+    const keys = ["recepcaoFamilia", "tomografia", "atendimentoProcedimento", "primeiraConsulta"] as const;
+    for (const k of keys) expect(images[k].alt.length).toBeGreaterThan(40);
+    expect(tourChapters.some((c) => c.photos.includes(images.recepcaoFamilia))).toBe(true);
   });
 });
 
@@ -194,10 +237,18 @@ describe("distribuição das fotografias", () => {
     expect(read("app/a-clinica/page.tsx")).toMatch(/<Founders withPhoto/);
   });
 
-  it("associa a foto individual a um único profissional, com evidência registrada", () => {
-    const withPhoto = team.filter((m) => m.photo);
-    expect(withPhoto.map((m) => m.name)).toEqual(["Gabriel Faria Aiala"]);
-    expect(withPhoto[0].photoEvidence).toBeTruthy();
+  it("dá a cada profissional o próprio retrato, com evidência registrada", () => {
+    const photos = team.map((m) => m.photo);
+    expect(new Set(photos).size).toBe(team.length);
+    for (const m of team) expect(m.photoEvidence, m.name).toBeTruthy();
+    expect(usesOf("profissional")).toEqual([]);
+  });
+
+  it("só apresenta como fundadores Gabriel e Denise", () => {
+    expect(team.filter((m) => m.role).map((m) => m.name).sort()).toEqual([
+      "Denise Ligório Fialho Aiala",
+      "Gabriel Faria Aiala",
+    ]);
   });
 
   it("não referencia nomes antigos de arquivos", () => {

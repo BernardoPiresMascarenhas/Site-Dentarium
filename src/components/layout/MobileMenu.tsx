@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 
-import { clinic, telHref } from "@/data/clinic";
+import { clinic, telHref, whatsappHref } from "@/data/clinic";
 import { mainNav, scheduleCta } from "@/data/navigation";
 import { buttonClass } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
@@ -64,7 +64,9 @@ export function MobileMenu({ pathname }: { pathname: string }) {
       >
         <div className="flex h-full flex-col px-6 pb-8">
           <div className="flex h-[var(--header-h)] items-center justify-between">
-            <Logo className="-ml-1 h-10 sm:h-11" />
+            <Link href="/" onNavigate={close} aria-label="Dentarium, página inicial" className="-ml-1 rounded-sm">
+              <Logo className="h-10 sm:h-11" />
+            </Link>
             <button
               type="button"
               onClick={close}
@@ -104,7 +106,16 @@ export function MobileMenu({ pathname }: { pathname: string }) {
             <Link href={scheduleCta.href} onNavigate={close} className={buttonClass("primary", "w-full")}>
               {scheduleCta.label}
             </Link>
-            <a href={telHref(phone)} className={buttonClass("secondary", "w-full")}>
+            <a
+              href={whatsappHref()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonClass("secondary", "w-full")}
+            >
+              WhatsApp {clinic.whatsapp.value.display}
+              <span className="sr-only"> (abre em nova aba)</span>
+            </a>
+            <a href={telHref(phone)} className="block py-2 text-center text-sm font-semibold text-graphite">
               Ligar {phone.display}
             </a>
           </div>

@@ -14,8 +14,8 @@ export function TreatmentsPreview() {
             </h2>
           </div>
           <p className="prose-body max-w-[24rem] md:pb-2">
-            Os principais tratamentos da clínica. Cada um começa por uma avaliação individual — é
-            ela que indica o caminho mais adequado.
+            Os principais tratamentos da clínica. Cada um começa por uma avaliação individual, que
+            indica o caminho mais adequado.
           </p>
         </div>
 

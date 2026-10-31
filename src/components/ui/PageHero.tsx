@@ -1,6 +1,4 @@
-import Link from "next/link";
-
-type Crumb = { href: string; label: string };
+import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 
 type PageHeroProps = {
   title: string;
@@ -20,32 +18,7 @@ export function PageHero({ title, lede, crumbs, aside, children }: PageHeroProps
         }`}
       >
         <div className="max-w-[46rem]">
-          <nav aria-label="Trilha de navegação">
-            <ol className="flex flex-wrap items-center gap-2 text-sm text-stone">
-              <li>
-                <Link href="/" className="transition-colors hover:text-clay">
-                  Início
-                </Link>
-              </li>
-              {crumbs.map((c, i) => {
-                const last = i === crumbs.length - 1;
-                return (
-                  <li key={c.href} className="flex items-center gap-2">
-                    <span aria-hidden className="text-line">/</span>
-                    {last ? (
-                      <span aria-current="page" className="text-ink">
-                        {c.label}
-                      </span>
-                    ) : (
-                      <Link href={c.href} className="transition-colors hover:text-clay">
-                        {c.label}
-                      </Link>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-          </nav>
+          <Breadcrumbs crumbs={crumbs} />
           <h1 className="display-xl intro-rise mt-8" style={{ "--i": 0 } as React.CSSProperties}>
             {title}
           </h1>

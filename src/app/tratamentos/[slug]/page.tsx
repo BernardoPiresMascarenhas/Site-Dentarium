@@ -2,13 +2,27 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getCategory, getTreatment, treatments } from "@/data/treatments";
+import {
+  getCategory,
+  getTreatment,
+  treatmentWhatsappMessage,
+  treatments,
+  type Treatment,
+} from "@/data/treatments";
+import { treatmentMedia } from "@/data/treatmentMedia";
 import { scheduleCta } from "@/data/navigation";
 import { PageHero } from "@/components/ui/PageHero";
 import { ButtonLink } from "@/components/ui/Button";
-import { Accordion } from "@/components/ui/Accordion";
 import { CtaBand } from "@/components/clinic/CtaBand";
+import { WhatsappButton } from "@/components/clinic/WhatsappButton";
 import { TreatmentCard } from "@/components/treatments/TreatmentCard";
+import {
+  CareAndFaqSection,
+  DetailsSection,
+  FeatureSection,
+  IntroSection,
+  StepsSection,
+} from "@/components/treatments/TreatmentSections";
 
 export function generateStaticParams() {
   return treatments.map((t) => ({ slug: t.slug }));
@@ -18,7 +32,30 @@ export async function generateMetadata({ params }: PageProps<"/tratamentos/[slug
   const { slug } = await params;
   const treatment = getTreatment(slug);
   if (!treatment) return { title: "Tratamento não encontrado" };
-  return { title: treatment.name, description: treatment.summary };
+  const category = getCategory(treatment.category);
+  const media = treatment.feature?.media ?? treatment.details?.find((d) => d.media)?.media;
+  const description = `${treatment.summary} ${category.name} na Clínica Dentarium, bairro Serra. Indicação mediante avaliação individual.`;
+  return {
+    title: `${treatment.name} em Belo Horizonte`,
+    description,
+    alternates: { canonical: `/tratamentos/${treatment.slug}` },
+    openGraph: {
+      title: `${treatment.name} | Clínica Dentarium`,
+      description,
+      ...(media && { images: [{ url: treatmentMedia[media].src.src, alt: treatmentMedia[media].alt }] }),
+    },
+  };
+}
+
+/** Âncoras do índice "Nesta página", na ordem em que as seções aparecem. */
+function pageAnchors(t: Treatment) {
+  const details = t.detailsNav
+    ? [{ href: `#${t.detailsNav.id}`, label: t.detailsNav.label }]
+    : (t.details ?? []).map((d) => ({ href: `#${d.id}`, label: d.title }));
+  const feature = t.feature ? [{ href: `#${t.feature.id}`, label: t.feature.kicker }] : [];
+  const steps = [{ href: "#etapas", label: "Etapas" }];
+  const middle = t.layout?.detailsFirst ? [...details, ...feature, ...steps] : [...feature, ...steps, ...details];
+  return [{ href: "#indicacoes", label: "Quando avaliar" }, ...middle, { href: "#duvidas", label: "Dúvidas" }];
 }
 
 export default async function TreatmentPage({ params }: PageProps<"/tratamentos/[slug]">) {
@@ -30,6 +67,9 @@ export default async function TreatmentPage({ params }: PageProps<"/tratamentos/
   const related = treatment.related
     .map((s) => getTreatment(s))
     .filter((t): t is NonNullable<typeof t> => Boolean(t));
+  const siblings = treatments.filter((t) => t.category === treatment.category);
+  const message = treatmentWhatsappMessage(treatment);
+  const detailsFirst = treatment.layout?.detailsFirst;
 
   return (
     <>
@@ -54,114 +94,53 @@ export default async function TreatmentPage({ params }: PageProps<"/tratamentos/
             )}
             <div>
               <dt className="text-sm font-semibold text-graphite">Indicação</dt>
-              <dd className="mt-1 text-stone">Depende de avaliação individual.</dd>
+              <dd className="mt-1 text-stone">Depende de avaliação individual com cirurgião-dentista.</dd>
             </div>
           </dl>
         }
       >
-        <ButtonLink href={scheduleCta.href}>{scheduleCta.label}</ButtonLink>
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <ButtonLink href={scheduleCta.href}>{scheduleCta.label}</ButtonLink>
+          <WhatsappButton message={message}>Tirar dúvidas pelo WhatsApp</WhatsappButton>
+        </div>
       </PageHero>
 
-      <article className="section">
-        <div className="container-site grid gap-16 lg:grid-cols-[1fr_20rem] lg:gap-24">
-          <div className="max-w-[44rem]">
-            <p className="font-serif text-[1.35rem] leading-[1.6] text-ink sm:text-[1.5rem]">
-              {treatment.intro}
-            </p>
-
-            <section aria-labelledby="quando-title" className="mt-16">
-              <h2 id="quando-title" className="display-md">
-                Quando conversar com o dentista sobre esta opção
-              </h2>
-              <ul className="mt-6 space-y-4">
-                {treatment.whenToTalk.map((item) => (
-                  <li key={item} className="grid grid-cols-[1.25rem_1fr] gap-4 leading-relaxed text-stone">
-                    <span aria-hidden className="arch mt-1 h-4 w-3 border border-clay/60" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-6 text-sm text-stone">
-                Esses sinais não indicam, por si só, a necessidade do tratamento. Eles são um bom
-                motivo para uma avaliação.
-              </p>
-            </section>
-
-            <section aria-labelledby="como-title" className="mt-16">
-              <h2 id="como-title" className="display-md">
-                Como o tratamento costuma ser conduzido
-              </h2>
-              <ol className="mt-8 border-t border-line">
-                {treatment.overview.map((step, i) => (
-                  <li key={step.title} className="grid grid-cols-[2.5rem_1fr] gap-4 border-b border-line py-6">
-                    <span className="font-serif text-xl text-clay tabular-nums">{i + 1}</span>
-                    <div>
-                      <h3 className="text-[1.05rem] font-semibold text-ink">{step.title}</h3>
-                      <p className="mt-2 leading-relaxed text-stone">{step.text}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-              <p className="mt-6 text-sm text-stone">
-                Visão geral. Etapas, técnicas e materiais são definidos para cada paciente.
-              </p>
-            </section>
-
-            <section aria-labelledby="duvidas-title" className="mt-16">
-              <h2 id="duvidas-title" className="display-md">
-                Dúvidas comuns
-              </h2>
-              <div className="mt-6">
-                <Accordion items={treatment.faq} />
-              </div>
-            </section>
-          </div>
-
-          <aside className="lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:self-start">
-            <div className="rounded-[var(--radius-md)] border border-line bg-paper p-7">
-              <p className="font-serif text-[1.35rem] leading-snug">
-                A indicação depende de avaliação individual com cirurgião-dentista.
-              </p>
-              <p className="mt-3 text-[0.92rem] leading-relaxed text-stone">
-                Este conteúdo é informativo e não substitui a consulta.
-              </p>
-              <ButtonLink href={scheduleCta.href} className="mt-6 w-full">
-                {scheduleCta.label}
-              </ButtonLink>
-            </div>
-            <nav aria-label="Outros tratamentos da área" className="mt-8">
-              <p className="text-sm font-semibold text-clay">{category.name}</p>
-              <ul className="mt-3 space-y-2">
-                {treatments
-                  .filter((t) => t.category === treatment.category)
-                  .map((t) => (
-                    <li key={t.slug}>
-                      <Link
-                        href={`/tratamentos/${t.slug}`}
-                        aria-current={t.slug === treatment.slug ? "page" : undefined}
-                        className={`text-[0.95rem] transition-colors ${
-                          t.slug === treatment.slug ? "font-semibold text-graphite" : "text-ink/80 hover:text-clay"
-                        }`}
-                      >
-                        {t.name}
-                      </Link>
-                    </li>
-                  ))}
-              </ul>
-              <Link href="/tratamentos" className="link-underline mt-5 inline-block text-sm font-semibold text-graphite">
-                Todos os tratamentos
-              </Link>
-            </nav>
-          </aside>
+      <nav aria-label="Nesta página" className="border-b border-line bg-ivory">
+        {/* No celular, uma faixa que rola na horizontal; a partir de sm, quebra em linhas. */}
+        <div className="container-site flex items-center gap-2 overflow-x-auto py-4 [scrollbar-width:none] sm:flex-wrap sm:overflow-visible">
+          <span className="mr-2 shrink-0 text-sm font-semibold text-clay">Nesta página</span>
+          {pageAnchors(treatment).map((a) => (
+            <a
+              key={a.href}
+              href={a.href}
+              className="inline-flex min-h-9 shrink-0 items-center rounded-full border whitespace-nowrap border-taupe-soft px-3.5 text-[0.85rem] text-ink/85 transition-colors hover:border-clay/50 hover:bg-taupe-tint hover:text-ink"
+            >
+              {a.label}
+            </a>
+          ))}
         </div>
+      </nav>
+
+      <article aria-label={treatment.name}>
+        <IntroSection treatment={treatment} />
+        {detailsFirst && <DetailsSection treatment={treatment} />}
+        {treatment.feature && <FeatureSection feature={treatment.feature} />}
+        <StepsSection treatment={treatment} />
+        {!detailsFirst && <DetailsSection treatment={treatment} />}
+        <CareAndFaqSection treatment={treatment} />
       </article>
 
-      {related.length > 0 && (
-        <section aria-labelledby="relacionados-title" className="border-t border-line bg-mist py-20">
-          <div className="container-site">
+      <section aria-labelledby="relacionados-title" className="border-t border-line bg-mist py-16 md:py-20">
+        <div className="container-site">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <h2 id="relacionados-title" className="display-md">
               Tratamentos relacionados
             </h2>
+            <Link href="/tratamentos" className="link-underline self-start text-sm font-semibold text-graphite lg:self-auto">
+              Todos os tratamentos
+            </Link>
+          </div>
+          {related.length > 0 && (
             <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((t) => (
                 <li key={t.slug}>
@@ -169,11 +148,38 @@ export default async function TreatmentPage({ params }: PageProps<"/tratamentos/
                 </li>
               ))}
             </ul>
-          </div>
-        </section>
-      )}
+          )}
+          <nav aria-label="Outros tratamentos da área" className="mt-10 border-t border-taupe-soft pt-8">
+            <p className="text-sm font-semibold text-clay">{category.name}</p>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {siblings.map((t) => {
+                const current = t.slug === treatment.slug;
+                return (
+                  <li key={t.slug}>
+                    <Link
+                      href={`/tratamentos/${t.slug}`}
+                      aria-current={current ? "page" : undefined}
+                      className={`inline-flex min-h-10 items-center rounded-full border px-4 text-sm transition-colors ${
+                        current
+                          ? "border-graphite bg-graphite font-semibold text-ivory"
+                          : "border-taupe-soft bg-ivory text-ink hover:border-clay/50 hover:bg-taupe-tint"
+                      }`}
+                    >
+                      {t.name}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        </div>
+      </section>
 
-      <CtaBand />
+      <CtaBand
+        title="Quer saber se este tratamento é indicado para você?"
+        text="A indicação depende de avaliação individual com cirurgião-dentista. Agende a sua ou envie suas dúvidas pelo WhatsApp."
+        whatsappMessage={message}
+      />
     </>
   );
 }

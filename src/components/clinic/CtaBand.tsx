@@ -1,19 +1,23 @@
 import { SCHEDULE_SUBJECT, clinic, mailtoHref, telHref } from "@/data/clinic";
 import { scheduleCta } from "@/data/navigation";
-import { ButtonAnchor, ButtonLink } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
+import { WhatsappButton } from "@/components/clinic/WhatsappButton";
 
 /** Faixa de encerramento das páginas internas. */
 export function CtaBand({
   title = "Vamos conversar sobre o seu caso?",
   text = "A indicação de qualquer tratamento depende de avaliação individual com cirurgião-dentista. Agende a sua.",
+  whatsappMessage,
 }: {
   title?: string;
   text?: string;
+  /** Mensagem pronta do WhatsApp; por padrão, a mensagem geral. */
+  whatsappMessage?: string;
 }) {
   const phone = clinic.phones.value[0];
   return (
     <section aria-label="Agendar avaliação" className="on-deep border-b border-white/10 bg-deep text-on-deep">
-      <div className="container-site grid items-end gap-10 py-20 lg:grid-cols-[1.2fr_1fr] lg:py-24">
+      <div className="container-site grid items-end gap-10 py-16 sm:py-20 lg:grid-cols-[1.2fr_1fr] lg:py-24">
         <div>
           <h2 className="display-lg max-w-[34rem]">{title}</h2>
           <p className="mt-5 max-w-[32rem] leading-relaxed text-on-deep-muted">{text}</p>
@@ -22,15 +26,20 @@ export function CtaBand({
           <ButtonLink href={scheduleCta.href} variant="light">
             {scheduleCta.label}
           </ButtonLink>
-          <ButtonAnchor href={telHref(phone)} variant="outline-light">
-            Ligar {phone.display}
-          </ButtonAnchor>
+          <WhatsappButton message={whatsappMessage} variant="outline-light">
+            WhatsApp
+          </WhatsappButton>
         </div>
-        <p className="text-sm text-on-deep-muted lg:col-span-2">
-          Prefere escrever?{" "}
+        <p className="text-sm leading-relaxed text-on-deep-muted lg:col-span-2">
+          {clinic.hours.value}. Também pelo telefone{" "}
+          <a href={telHref(phone)} className="link-underline text-on-deep">
+            {phone.display}
+          </a>{" "}
+          ou pelo e-mail{" "}
           <a href={mailtoHref(SCHEDULE_SUBJECT)} className="link-underline text-on-deep">
             {clinic.email.value}
           </a>
+          .
         </p>
       </div>
     </section>

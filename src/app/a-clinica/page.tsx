@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 
+import { clinic } from "@/data/clinic";
+import { values } from "@/data/content";
 import { images } from "@/data/images";
 import { PageHero } from "@/components/ui/PageHero";
 import { ClinicTour } from "@/components/clinic/ClinicTour";
 import { CtaBand } from "@/components/clinic/CtaBand";
 import { Founders } from "@/components/home/Founders";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "A Clínica",
   description:
-    "Conheça a Dentarium: odontologia funcional e estética no bairro Serra, em Belo Horizonte, com estrutura pensada para o conforto.",
+    "Conheça a história, os valores e a estrutura da Dentarium: odontologia funcional e estética no bairro Serra, em Belo Horizonte, com estacionamento próprio e acessibilidade.",
 };
 
 const principles = [
@@ -20,7 +23,7 @@ const principles = [
   },
   {
     title: "Áreas que conversam",
-    text: "Prevenção, estética, reabilitação e ortodontia planejadas em conjunto quando o caso pede mais de uma especialidade.",
+    text: "Depois da primeira consulta, os profissionais analisam o caso em conjunto, cada um em sua especialidade, para chegar a um diagnóstico multidisciplinar.",
   },
   {
     title: "Explicação clara",
@@ -30,6 +33,7 @@ const principles = [
 
 export default function ClinicPage() {
   const parede = images.logoParede;
+  const atendimento = images.consultorioAtendimento;
   return (
     <>
       <PageHero
@@ -75,6 +79,65 @@ export default function ClinicPage() {
       </section>
 
       <Founders withPhoto />
+
+      <section aria-labelledby="valores-title" className="section">
+        <div className="container-site grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:self-start">
+            <p className="kicker">Valores</p>
+            <h2 id="valores-title" className="display-lg mt-5 max-w-[24rem]">
+              Ir além do esperado.
+            </h2>
+            <p className="prose-body mt-6 max-w-[26rem]">
+              Atendimento e resultados de excelência, com o paciente como foco da clínica. São esses
+              valores que a Dentarium quer consolidar como referência em odontologia em Belo Horizonte.
+            </p>
+          </div>
+          <ul className="grid gap-x-12 sm:grid-cols-2">
+            {values.map((v, i) => (
+              <Reveal as="li" key={v.name} delay={(i % 2) * 0.06} className="border-t border-taupe-soft py-7">
+                <h3 className="font-serif text-[clamp(1.6rem,1.3rem+1vw,2.1rem)] leading-tight text-ink">{v.name}</h3>
+                <p className="mt-2 text-[0.95rem] leading-relaxed text-stone">{v.text}</p>
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section id="estrutura" aria-labelledby="estrutura-title" className="section border-y border-line bg-paper">
+        <div className="container-site grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <div>
+            <p className="kicker">Estrutura</p>
+            <h2 id="estrutura-title" className="display-lg mt-5 max-w-[24rem]">
+              Pensada para a sua visita.
+            </h2>
+            <p className="prose-body mt-6 max-w-[26rem]">
+              Na região Centro-Sul de Belo Horizonte, no bairro {clinic.address.value.neighborhood}, a
+              clínica reúne consultórios, exames de imagem e laboratório no mesmo endereço.
+            </p>
+            {/* Foto de 300 px: exibida no tamanho original, sem ampliação. */}
+            <figure className="mt-10 w-full" style={{ maxWidth: atendimento.src.width }}>
+              <div className="overflow-hidden rounded-[var(--radius-md)]" style={{ backgroundColor: atendimento.tone }}>
+                <Image
+                  src={atendimento.src}
+                  alt={atendimento.alt}
+                  placeholder="blur"
+                  sizes="300px"
+                  className="block h-auto w-full"
+                />
+              </div>
+              <figcaption className="mt-3 text-sm text-stone">{atendimento.caption}</figcaption>
+            </figure>
+          </div>
+          <dl className="grid gap-x-12 sm:grid-cols-2">
+            {clinic.facilities.value.map((f) => (
+              <div key={f.label} className="border-t border-line py-6">
+                <dt className="font-serif text-[1.3rem] leading-snug text-ink">{f.label}</dt>
+                <dd className="mt-2 text-[0.95rem] leading-relaxed text-stone">{f.text}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
 
       <section id="ambientes" aria-labelledby="ambientes-title" className="section">
         <div className="container-site">

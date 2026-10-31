@@ -1,7 +1,15 @@
 import type { StaticImageData } from "next/image";
 
 import heroEquipe from "../../public/images/dentarium/hero-equipe-dentarium.png";
-import profissional from "../../public/images/dentarium/profissional-dentarium.png";
+import gabriel from "../../public/images/dentarium/gabriel.png";
+import denise from "../../public/images/dentarium/denise.png";
+import fernanda from "../../public/images/dentarium/fernanda.png";
+import salaRadiografia from "../../public/images/dentarium/sala-de-radiografia-dentarium-300x240.png";
+import consultorioOdontologico from "../../public/images/dentarium/Consultorio-odontologico.png";
+import consultorioAtendimento from "../../public/images/dentarium/consultorio.png";
+import consultorioVidro from "../../public/images/dentarium/consultorio2.png";
+import salaEsperaPoltronas from "../../public/images/dentarium/salaespera.png";
+import estacionamento from "../../public/images/dentarium/estacionamento.png";
 import fundadores from "../../public/images/dentarium/fundadores.webp";
 import salaEspera from "../../public/images/dentarium/sala-espera.webp";
 import jardimExterno from "../../public/images/dentarium/jardim-externo.png";
@@ -10,20 +18,37 @@ import fachada from "../../public/images/dentarium/fachada.webp";
 import logoParede from "../../public/images/dentarium/logo-parede.webp";
 import consultorioRoxo from "../../public/images/dentarium/consultorio-roxo.webp";
 import consultorioEquipamentos from "../../public/images/dentarium/consultorio-equipamentos.webp";
+import recepcaoFamilia from "../../public/images/dentarium/recepcao-familia.webp";
+import tomografia from "../../public/images/dentarium/tomografia.webp";
+import atendimentoProcedimento from "../../public/images/dentarium/atendimento-procedimento.webp";
+import primeiraConsulta from "../../public/images/dentarium/primeira-consulta.png";
 
 /**
  * Catálogo das fotografias da Dentarium.
  *
- * Só as imagens liberadas para a demonstração são importadas. As restritas
- * aparecem em `restrictedImages` apenas como registro: nunca são importadas
- * por componentes (ver PENDENCIAS_PUBLICACAO.md).
+ * Fotos com pacientes ou pessoas atendidas (recepcaoFamilia, tomografia,
+ * atendimentoProcedimento, primeiraConsulta) vieram do site anterior da
+ * clínica, com autorização de uso informada pelo responsável pelo projeto em
+ * 2026-10-31 (ver PENDENCIAS_PUBLICACAO.md).
  *
  * Distribuição por página (evita repetição):
  * - Home: heroEquipe (hero), salaEspera + logoParede (sobre),
  *   consultorioEquipamentos (tecnologia), homeGallery, fachada (contato).
- * - A Clínica: logoParede (abertura), fundadores (registro institucional),
- *   tour (fachada, jardim, sala de espera, consultórios, apoio clínico).
- * - Tecnologia: salaApoio. Equipe: profissional. Contato: fachada.
+ * - A Clínica: logoParede (abertura), fundadores (história), consultorioAtendimento
+ *   (estrutura), tour (fachada, jardim, estacionamento, recepção, salas de
+ *   espera, consultórios, apoio clínico).
+ * - Tecnologia: salaApoio (abertura), tomografia (exames de imagem),
+ *   consultorioVidro (planejamento digital), atendimentoProcedimento
+ *   (atendimento).
+ * - Equipe: gabriel, denise, fernanda. Contato: sem fotos.
+ * - Tratamentos: primeiraConsulta apoia a página de primeira consulta. As
+ *   ilustrações dos tratamentos ficam em treatmentMedia.ts.
+ *
+ * Os arquivos de 300 × 240 px (site antigo) nunca são exibidos acima da
+ * largura original: os componentes limitam a largura a `src.width`.
+ * `profissional-dentarium.png` (tratada por IA) deixou de ser usada quando
+ * os retratos individuais foram entregues, e `salaRadiografia` (300 px) deu
+ * lugar à foto da tomografia em Tecnologia.
  */
 
 export type ClinicImage = {
@@ -52,14 +77,77 @@ export const images = {
     tone: "#b79488",
     aiTreated: true,
   },
-  profissional: {
-    id: "profissional",
-    src: profissional,
-    alt: "Gabriel Faria Aiala, de jaleco branco e gravata preta, diante da parede com o símbolo e o nome Dentarium.",
-    caption: "Gabriel Faria Aiala",
-    focus: "38% 28%",
-    tone: "#c1bdb6",
-    aiTreated: true,
+  gabriel: {
+    id: "gabriel",
+    src: gabriel,
+    alt: "Dr. Gabriel Faria Aiala, sorridente, de jaleco cinza, camisa azul-clara e gravata, diante da parede em relevo com o nome Dentarium.",
+    caption: "Dr. Gabriel Faria Aiala",
+    focus: "50% 30%",
+    tone: "#dcdbd8",
+  },
+  denise: {
+    id: "denise",
+    src: denise,
+    alt: "Dra. Denise Ligório Fialho Aiala, sorridente, de cabelos castanhos ondulados e jaleco cinza, diante da parede em relevo com o nome Dentarium.",
+    caption: "Dra. Denise Ligório Fialho Aiala",
+    focus: "47% 30%",
+    tone: "#dcdbd8",
+  },
+  fernanda: {
+    id: "fernanda",
+    src: fernanda,
+    alt: "Dra. Fernanda de Paula T. Bastos, sorridente, de cabelos castanhos lisos e jaleco branco, diante da parede em relevo com o nome Dentarium.",
+    caption: "Dra. Fernanda de Paula T. Bastos",
+    focus: "48% 30%",
+    tone: "#dcdbd8",
+  },
+  salaRadiografia: {
+    id: "sala-radiografia",
+    src: salaRadiografia,
+    alt: "Sala de radiografia com aparelho de exame panorâmico de parede e aparelho de raio X intraoral em suporte com rodízios.",
+    caption: "Sala de radiografia",
+    focus: "50% 50%",
+    tone: "#dfe0e0",
+  },
+  consultorioOdontologico: {
+    id: "consultorio-odontologico",
+    src: consultorioOdontologico,
+    alt: "Consultório claro com cadeira odontológica verde-água, armários brancos e bancada de granito sob a janela.",
+    caption: "Consultório com bancada",
+    focus: "50% 50%",
+    tone: "#dcdad6",
+  },
+  consultorioAtendimento: {
+    id: "consultorio-atendimento",
+    src: consultorioAtendimento,
+    alt: "Consultório com cadeira odontológica roxa, televisão em painel de madeira e mesa de atendimento com computador.",
+    caption: "Consultório com mesa de atendimento",
+    focus: "50% 50%",
+    tone: "#d9d3cd",
+  },
+  consultorioVidro: {
+    id: "consultorio-vidro",
+    src: consultorioVidro,
+    alt: "Consultório visto através de divisória de vidro, com cadeira odontológica bege e monitores suspensos.",
+    caption: "Consultório com monitores",
+    focus: "50% 50%",
+    tone: "#e6e6e4",
+  },
+  salaEsperaPoltronas: {
+    id: "sala-espera-poltronas",
+    src: salaEsperaPoltronas,
+    alt: "Sala de espera com poltronas cinza, mesa de centro, orquídea branca e portas de vidro.",
+    caption: "Poltronas da sala de espera",
+    focus: "50% 50%",
+    tone: "#e3dfda",
+  },
+  estacionamento: {
+    id: "estacionamento",
+    src: estacionamento,
+    alt: "Estacionamento coberto da clínica, com piso de bloquetes, um carro estacionado e o número 857 na parede.",
+    caption: "Estacionamento próprio",
+    focus: "50% 50%",
+    tone: "#cfccc8",
   },
   fundadores: {
     id: "fundadores",
@@ -125,7 +213,41 @@ export const images = {
     focus: "50% 50%",
     tone: "#cbc3b4",
   },
+  recepcaoFamilia: {
+    id: "recepcao-familia",
+    src: recepcaoFamilia,
+    alt: "Na recepção da Dentarium, uma mãe e a filha sorriem no balcão enquanto a recepcionista as atende ao computador; ao lado, um vaso de orquídeas brancas.",
+    caption: "Recepção",
+    focus: "60% 40%",
+    tone: "#b1b1b6",
+  },
+  tomografia: {
+    id: "tomografia",
+    src: tomografia,
+    alt: "Dentista de jaleco cinza posiciona um paciente no aparelho de tomografia, na sala de exames de imagem.",
+    caption: "Sala de tomografia",
+    focus: "50% 40%",
+    tone: "#9f9fa3",
+  },
+  atendimentoProcedimento: {
+    id: "atendimento-procedimento",
+    src: atendimentoProcedimento,
+    alt: "Dentista de jaleco cinza e touca estampada posiciona o aparelho de raio X intraoral junto ao rosto de uma paciente deitada na cadeira odontológica.",
+    caption: "Atendimento no consultório",
+    focus: "40% 50%",
+    tone: "#b4b1b1",
+  },
+  primeiraConsulta: {
+    id: "primeira-consulta",
+    src: primeiraConsulta,
+    alt: "Dentista de jaleco cinza mostra informações no monitor do computador a uma paciente sentada à mesa de atendimento.",
+    caption: "Conversa na mesa de atendimento",
+    focus: "50% 40%",
+    tone: "#8d9190",
+  },
 } satisfies Record<string, ClinicImage>;
+
+export type ClinicImageKey = keyof typeof images;
 
 /** Galeria da home: só ambientes que não aparecem em outras seções da página. */
 export const homeGallery: ClinicImage[] = [images.consultorioRoxo, images.jardimExterno, images.salaApoio];
@@ -139,16 +261,28 @@ export const tourChapters: { id: string; title: string; text: string; photos: Cl
     photos: [images.fachada, images.jardimExterno],
   },
   {
+    id: "estacionamento",
+    title: "Estacionamento",
+    text: "Estacionamento próprio na entrada do prédio, para chegar com mais comodidade.",
+    photos: [images.estacionamento],
+  },
+  {
+    id: "recepcao",
+    title: "Recepção",
+    text: "A recepção acolhe pacientes de todas as idades e organiza cada horário com atenção.",
+    photos: [images.recepcaoFamilia],
+  },
+  {
     id: "espera",
     title: "Espera",
-    text: "Poltronas confortáveis, madeira e iluminação suave: um lugar para aguardar com tranquilidade.",
-    photos: [images.salaEspera],
+    text: "Poltronas acolchoadas, televisão e lavabo: um lugar para aguardar com tranquilidade.",
+    photos: [images.salaEspera, images.salaEsperaPoltronas],
   },
   {
     id: "consultorios",
     title: "Consultórios",
-    text: "Ambientes claros e organizados, com o equipamento ao alcance da equipe.",
-    photos: [images.consultorioRoxo, images.consultorioEquipamentos],
+    text: "Ambientes claros e organizados, com televisão e mesa de atendimento com computador para apresentar as possibilidades de tratamento.",
+    photos: [images.consultorioRoxo, images.consultorioOdontologico],
   },
   {
     id: "apoio",
@@ -160,29 +294,3 @@ export const tourChapters: { id: string; title: string; text: string; photos: Cl
 
 /** Todas as fotos do tour, na ordem de leitura (usada pelo lightbox). */
 export const tourImages: ClinicImage[] = tourChapters.flatMap((c) => c.photos);
-
-export type RestrictedImage = {
-  file: string;
-  status: "pending-authorization" | "do-not-publish";
-  reason: string;
-};
-
-export const restrictedImages: RestrictedImage[] = [
-  {
-    file: "recepcao-familia.webp",
-    status: "pending-authorization",
-    reason:
-      "Pessoas identificáveis, incluindo uma criança. Exige autorização expressa dos retratados e do responsável legal.",
-  },
-  {
-    file: "tomografia.webp",
-    status: "pending-authorization",
-    reason:
-      "Mostra um paciente identificável dentro do equipamento. Uso promocional depende de autorização e revisão ética.",
-  },
-  {
-    file: "atendimento-procedimento.png e atendimento-procedimento.webp",
-    status: "do-not-publish",
-    reason: "Procedimento em andamento com paciente identificável (restrição da Resolução CFO 196/2019).",
-  },
-];

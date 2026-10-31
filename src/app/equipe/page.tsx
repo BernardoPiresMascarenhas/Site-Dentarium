@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
 import { images } from "@/data/images";
 import { type TeamMember, team } from "@/data/team";
 import { PageHero } from "@/components/ui/PageHero";
+import { Reveal } from "@/components/ui/Reveal";
 import { CtaBand } from "@/components/clinic/CtaBand";
 
 export const metadata: Metadata = {
   title: "Equipe",
-  description: "Profissionais da Clínica Dentarium, em Belo Horizonte.",
+  description:
+    "Conheça os profissionais da Clínica Dentarium, em Belo Horizonte: Dr. Gabriel Faria Aiala e Dra. Denise Ligório Fialho Aiala, fundadores, e Dra. Fernanda de Paula T. Bastos, odontopediatria.",
 };
 
 export default function TeamPage() {
@@ -17,23 +21,18 @@ export default function TeamPage() {
       <PageHero
         crumbs={[{ href: "/equipe", label: "Equipe" }]}
         title="Profissionais da Dentarium."
-        lede="Os profissionais apresentados pela clínica, com seus registros no conselho de odontologia."
+        lede="Conheça quem cuida do seu sorriso: os fundadores da clínica e a odontopediatra do Dentarium Kids, com seus registros no conselho e as formações divulgadas."
       />
 
       <section aria-label="Profissionais" className="pt-6 pb-20 md:pb-28">
         <div className="container-site">
-          <ul className="border-t border-taupe-soft">
-            {team.map((m) => (
-              <li key={m.name} className="border-b border-taupe-soft">
-                {m.photo ? <MemberWithPhoto member={m} /> : <MemberTypographic member={m} />}
+          <ul>
+            {team.map((m, i) => (
+              <li key={m.id} id={m.id} className="scroll-mt-[calc(var(--header-h)+1.5rem)] border-b border-taupe-soft last:border-b-0">
+                <Member member={m} flip={i % 2 === 1} />
               </li>
             ))}
           </ul>
-
-          <p className="mt-8 max-w-[40rem] text-sm leading-relaxed text-stone">
-            Nomes e registros conforme divulgados pela clínica. Fotografias individuais são
-            publicadas apenas quando a pessoa retratada está identificada.
-          </p>
         </div>
       </section>
 
@@ -42,68 +41,70 @@ export default function TeamPage() {
   );
 }
 
-/** Nome e função — a mesma hierarquia em todas as variações. */
-function MemberText({ member }: { member: TeamMember }) {
+/**
+ * Retrato e ficha profissional lado a lado, alternando o lado no desktop.
+ * Os retratos têm 512 px: a moldura fica limitada a 20rem para não esticar.
+ */
+function Member({ member, flip }: { member: TeamMember; flip: boolean }) {
+  const photo = images[member.photo];
   return (
-    <div>
-      {member.role && <p className="text-[0.82rem] font-semibold text-clay">{member.role}</p>}
-      <h2 className="mt-3 font-serif text-[clamp(1.9rem,1.4rem+2vw,3rem)] leading-[1.05] tracking-[-0.015em] text-balance text-ink">
-        {member.name}
-      </h2>
-    </div>
-  );
-}
-
-function MemberRegistry({ member }: { member: TeamMember }) {
-  return (
-    <dl className="flex items-baseline gap-3 text-sm md:justify-end">
-      <dt className="text-taupe">Registro profissional</dt>
-      <dd className="font-semibold text-ink tabular-nums">CRO {member.cro}</dd>
-    </dl>
-  );
-}
-
-/** Sem fotografia: composição tipográfica, sem iniciais nem retrato inventado. */
-function MemberTypographic({ member }: { member: TeamMember }) {
-  return (
-    <div className="grid gap-x-10 gap-y-4 py-9 transition-colors duration-500 hover:bg-taupe-tint/60 md:grid-cols-[1fr_auto] md:items-end md:px-4 lg:py-11">
-      <MemberText member={member} />
-      <MemberRegistry member={member} />
-    </div>
-  );
-}
-
-/** Com fotografia individual identificada: retrato ao lado do texto. */
-function MemberWithPhoto({ member }: { member: TeamMember }) {
-  const photo = images[member.photo!];
-  return (
-    <div className="grid gap-x-10 gap-y-6 py-9 transition-colors duration-500 hover:bg-taupe-tint/60 sm:grid-cols-[13rem_1fr] sm:items-end md:grid-cols-[15rem_1fr_auto] md:px-4 lg:grid-cols-[19rem_1fr_auto] lg:gap-x-14 lg:py-12">
-      <figure className="relative w-full max-w-[19rem]">
-        <span aria-hidden className="frame-portrait absolute inset-0 -translate-x-2.5 -translate-y-2.5 bg-clay/[0.14]" />
-        <div
-          className="frame-portrait relative overflow-hidden"
-          style={{ backgroundColor: photo.tone, aspectRatio: `${photo.src.width} / ${photo.src.height}` }}
-        >
+    <article
+      aria-labelledby={`${member.id}-nome`}
+      className="grid items-center gap-x-16 gap-y-10 py-14 md:grid-cols-12 lg:py-20"
+    >
+      <Reveal as="figure" className={`relative mx-auto w-full max-w-[20rem] md:col-span-5 md:mx-0 ${flip ? "md:order-2 md:col-start-8 md:justify-self-end" : ""}`}>
+        <span aria-hidden className={`frame-portrait absolute inset-0 -translate-y-3 bg-clay/[0.12] ${flip ? "-translate-x-3" : "translate-x-3"}`} />
+        <div className="frame-portrait relative aspect-[4/5] overflow-hidden" style={{ backgroundColor: photo.tone }}>
           <Image
             src={photo.src}
             alt={photo.alt}
             fill
             placeholder="blur"
-            sizes="(min-width: 1024px) 304px, (min-width: 640px) 240px, 70vw"
+            sizes="(min-width: 768px) 320px, 80vw"
             className="object-cover"
             style={{ objectPosition: photo.focus }}
           />
         </div>
-      </figure>
-      <div>
-        <MemberText member={member} />
-        <div className="mt-5 md:hidden">
-          <MemberRegistry member={member} />
-        </div>
-      </div>
-      <div className="hidden md:block">
-        <MemberRegistry member={member} />
-      </div>
-    </div>
+      </Reveal>
+
+      <Reveal delay={0.08} className={`md:col-span-7 ${flip ? "md:order-1 md:col-start-1" : ""}`}>
+        <p className="kicker">{member.role ? `${member.role} da Dentarium` : "Equipe clínica"}</p>
+        <h2
+          id={`${member.id}-nome`}
+          className="mt-5 font-serif text-[clamp(2rem,1.4rem+2.2vw,3.2rem)] leading-[1.05] tracking-[-0.015em] text-balance text-ink"
+        >
+          <span className="text-taupe">{member.title}</span> {member.name}
+        </h2>
+
+        <dl className="mt-9 grid max-w-[34rem] gap-y-7 border-t border-taupe-soft pt-7 sm:grid-cols-[10rem_1fr]">
+          <dt className="text-sm font-semibold text-graphite">Registro</dt>
+          <dd className="text-ink tabular-nums">CRO {member.cro}</dd>
+
+          <dt className="text-sm font-semibold text-graphite">
+            {member.credentials.length > 1 ? "Formação" : "Área"}
+          </dt>
+          <dd>
+            <ul className="space-y-2.5">
+              {member.credentials.map((c) => (
+                <li key={c} className="grid grid-cols-[1.25rem_1fr] gap-3 text-[1.02rem] leading-snug text-ink">
+                  <span aria-hidden className="arch mt-0.5 h-4 w-3 border border-clay/60" />
+                  {c}
+                </li>
+              ))}
+            </ul>
+          </dd>
+        </dl>
+
+        {member.area && (
+          <Link
+            href={`/tratamentos/${member.area.slug}`}
+            className="group mt-9 inline-flex items-center gap-2 text-sm font-semibold text-graphite"
+          >
+            <span className="link-underline">Saiba mais sobre {member.area.label.toLowerCase()}</span>
+            <ArrowUpRight aria-hidden className="size-4 text-clay transition-transform duration-500 ease-soft group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+        )}
+      </Reveal>
+    </article>
   );
 }

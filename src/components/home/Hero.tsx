@@ -49,7 +49,7 @@ export function Hero() {
             style={{ "--i": 5 } as React.CSSProperties}
           >
             <span aria-hidden className="h-px w-10 bg-taupe-line" />
-            {address.street}, {address.neighborhood} — {address.region}
+            {address.street}, {address.neighborhood}, {address.region}
           </p>
         </div>
 

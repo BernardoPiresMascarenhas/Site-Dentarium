@@ -66,8 +66,8 @@ export function Header() {
       }`}
     >
       <div className="container-site flex h-[var(--header-h)] items-center justify-between gap-6">
-        <Link href="/" aria-label="Dentarium — página inicial" className="-ml-1 shrink-0 rounded-sm">
-          <Logo className="h-10 sm:h-11 xl:h-12" priority />
+        <Link href="/" aria-label="Dentarium, página inicial" className="-ml-1 shrink-0 rounded-sm">
+          <Logo className="h-11 sm:h-12 xl:h-[3.25rem]" priority />
         </Link>
 
         <nav aria-label="Principal" className="hidden xl:block">

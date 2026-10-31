@@ -219,7 +219,8 @@ export function PhotoTile({
       className={`group relative block overflow-hidden text-left focus-visible:outline-offset-4 ${
         arch ? "arch" : "rounded-[var(--radius-md)]"
       } ${fixedHeight ? "" : "w-full"} ${className}`}
-      style={{ backgroundColor: img.tone, aspectRatio: ratio }}
+      // Nunca acima da largura do arquivo: fotos pequenas não são esticadas.
+      style={{ backgroundColor: img.tone, aspectRatio: ratio, maxWidth: fixedHeight ? undefined : img.src.width }}
       aria-label={`Ampliar foto: ${img.caption}`}
     >
       <Image

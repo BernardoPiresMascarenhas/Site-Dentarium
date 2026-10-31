@@ -40,7 +40,9 @@ export function Journey() {
               className="relative grid grid-cols-[2.75rem_1fr] gap-6 pb-14 last:pb-0"
               initial={{ opacity: 0.35 }}
               whileInView={{ opacity: 1 }}
-              viewport={{ margin: "0px 0px -35% 0px", once: true }}
+              // A margem superior de 100% conta como "vista" a etapa que já ficou
+              // acima da tela: numa rolagem rápida, nenhuma etapa fica apagada.
+              viewport={{ margin: "100% 0px -35% 0px", once: true }}
               transition={{ duration: 0.5 }}
             >
               <span className="relative z-10 grid size-11 place-items-center rounded-full border border-rose bg-ivory font-serif text-lg text-clay">

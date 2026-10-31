@@ -1,123 +1,104 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
-import {
-  SCHEDULE_SUBJECT,
-  clinic,
-  fullAddress,
-  mailtoHref,
-  mapsUrl,
-  telHref,
-  whatsappHref,
-} from "@/data/clinic";
-import { images } from "@/data/images";
-import { PageHero } from "@/components/ui/PageHero";
-import { ButtonAnchor } from "@/components/ui/Button";
+import { SCHEDULE_SUBJECT, clinic, fullAddress, mailtoHref, telHref, whatsappHref } from "@/data/clinic";
+import { WhatsappButton } from "@/components/clinic/WhatsappButton";
 import { ScheduleForm } from "@/components/clinic/ScheduleForm";
+import { LocationSection } from "@/components/clinic/LocationSection";
+import { HealthPlans } from "@/components/clinic/HealthPlans";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Contato",
-  description: `Endereço, telefones e e-mail da Clínica Dentarium: ${fullAddress()}.`,
+  description: `Solicite uma avaliação pelo WhatsApp, veja telefones, e-mail, horário e como chegar à Clínica Dentarium: ${fullAddress()}. Segunda a sexta, das 8h às 18h30.`,
 };
 
 export default function ContactPage() {
-  const whatsapp = whatsappHref();
-  const fachada = images.fachada;
   const address = clinic.address.value;
 
   return (
     <>
-      <PageHero
-        crumbs={[{ href: "/contato", label: "Contato" }]}
-        title="Fale com a Dentarium."
-        lede="Ligue para a recepção ou envie um e-mail para agendar sua avaliação. Ficamos na Rua do Ouro, no bairro Serra."
-        aside={
-          <figure>
-            <div className="arch overflow-hidden" style={{ backgroundColor: fachada.tone }}>
-              <Image
-                src={fachada.src}
-                alt={fachada.alt}
-                priority
-                placeholder="blur"
-                sizes="(min-width: 1024px) 384px, 90vw"
-                className="block h-auto w-full"
-              />
-            </div>
-            <figcaption className="mt-3 text-sm text-stone">{fachada.caption}</figcaption>
-          </figure>
-        }
-      >
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <ButtonAnchor href={telHref(clinic.phones.value[0])}>
-            Ligar {clinic.phones.value[0].display}
-          </ButtonAnchor>
-          <ButtonAnchor href={mailtoHref(SCHEDULE_SUBJECT)} variant="secondary">
-            Enviar e-mail
-          </ButtonAnchor>
-        </div>
-      </PageHero>
-
-      <section aria-label="Informações de contato" className="section">
-        <div className="container-site grid gap-16 lg:grid-cols-[1fr_1fr] lg:gap-20">
+      <section aria-labelledby="contato-title" className="border-b border-line">
+        <div className="container-site grid gap-14 pt-10 pb-16 md:pt-14 lg:grid-cols-[1fr_minmax(0,31rem)] lg:gap-16 lg:pb-24 xl:gap-24">
           <div>
-            <dl className="divide-y divide-line border-y border-line">
-              <InfoRow term="Endereço">
+            <Breadcrumbs crumbs={[{ href: "/contato", label: "Contato" }]} />
+            <h1
+              id="contato-title"
+              className="display-xl intro-rise mt-8 max-w-[34rem]"
+              style={{ "--i": 0 } as React.CSSProperties}
+            >
+              Vamos cuidar do seu sorriso?
+            </h1>
+            <p className="lede intro-rise mt-6 max-w-[34rem]" style={{ "--i": 1 } as React.CSSProperties}>
+              Conte o que você procura e a recepção combina com você o melhor horário para a primeira
+              avaliação. Se preferir, fale direto pelo WhatsApp ou por telefone.
+            </p>
+
+            <ul
+              className="intro-rise mt-10 divide-y divide-line border-y border-line"
+              style={{ "--i": 2 } as React.CSSProperties}
+            >
+              <InfoRow icon={<MapPin className="size-[1.1rem]" />} title="Endereço">
                 <p>
-                  {address.street}
+                  {address.street} — {address.neighborhood}
                   <br />
-                  {address.neighborhood}, {address.city}/{address.state}
+                  {address.city}/{address.state}
                 </p>
-                <a
-                  href={mapsUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-underline mt-2 inline-block text-sm font-semibold text-graphite"
-                >
-                  Ver rotas no Google Maps
-                  <span className="sr-only"> (abre em nova aba)</span>
+                <a href="#como-chegar" className="link-underline mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-graphite sm:min-h-0">
+                  Ver mapa e como chegar
                 </a>
               </InfoRow>
-              <InfoRow term="Telefones">
-                <ul className="space-y-1">
-                  {clinic.phones.value.map((p) => (
-                    <li key={p.e164}>
-                      <a href={telHref(p)} className="link-underline">
-                        {p.display}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+              <InfoRow icon={<MessageCircle className="size-[1.1rem]" />} title="WhatsApp">
+                <a
+                  href={whatsappHref()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline tabular-nums"
+                >
+                  {clinic.whatsapp.value.display}
+                  <span className="sr-only"> (abre o WhatsApp em nova aba)</span>
+                </a>
               </InfoRow>
-              <InfoRow term="E-mail">
+              <InfoRow icon={<Phone className="size-[1.1rem]" />} title="Telefones">
+                <span className="flex flex-wrap gap-x-5 gap-y-1">
+                  {clinic.phones.value.map((p) => (
+                    <a key={p.e164} href={telHref(p)} className="link-underline tabular-nums">
+                      {p.display}
+                    </a>
+                  ))}
+                </span>
+              </InfoRow>
+              <InfoRow icon={<Mail className="size-[1.1rem]" />} title="E-mail">
                 <a href={mailtoHref(SCHEDULE_SUBJECT)} className="link-underline break-all">
                   {clinic.email.value}
                 </a>
               </InfoRow>
-              <InfoRow term="Horário">
-                {clinic.hours.value}
+              <InfoRow icon={<Clock className="size-[1.1rem]" />} title="Horário">
+                <ul className="space-y-1">
+                  {clinic.schedule.map((s) => (
+                    <li key={s.days} className="flex flex-wrap justify-between gap-x-6 sm:max-w-[20rem]">
+                      <span>{s.days}</span>
+                      <span className={`tabular-nums ${s.time === "Fechado" ? "text-stone" : ""}`}>{s.time}</span>
+                    </li>
+                  ))}
+                </ul>
               </InfoRow>
-              <InfoRow term="WhatsApp">
-                {whatsapp ? (
-                  <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="link-underline">
-                    Conversar pelo WhatsApp
-                  </a>
-                ) : (
-                  <span className="text-stone">
-                    Em breve. O número oficial está sendo confirmado — por enquanto, use telefone ou
-                    e-mail.
-                  </span>
-                )}
-              </InfoRow>
-            </dl>
+            </ul>
 
+            <div className="intro-rise mt-9" style={{ "--i": 3 } as React.CSSProperties}>
+              <WhatsappButton variant="secondary" className="w-full sm:w-auto">
+                Falar agora pelo WhatsApp
+              </WhatsappButton>
+            </div>
           </div>
 
-          <div id="agendar" className="scroll-mt-28">
-            <div className="rounded-[var(--radius-md)] border border-line bg-paper p-7 sm:p-10">
-              <h2 className="display-md">Pedir um horário por e-mail</h2>
+          <div id="agendar" className="intro-settle lg:pt-16">
+            <div className="rounded-[var(--radius-md)] border border-line bg-paper p-6 shadow-[0_30px_60px_-44px_rgba(63,66,63,0.45)] sm:p-9">
+              <p className="kicker">Avaliação</p>
+              <h2 className="display-md mt-4">Solicite sua avaliação</h2>
               <p className="prose-body mt-3 text-[0.95rem]">
-                Preencha o básico e a mensagem de agendamento fica pronta no seu e-mail. A recepção
-                responde para combinar o horário.
+                Preencha os campos e a mensagem fica pronta no WhatsApp. A recepção responde para
+                combinar o horário.
               </p>
               <div className="mt-8">
                 <ScheduleForm />
@@ -126,15 +107,23 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      <HealthPlans />
+      <LocationSection />
     </>
   );
 }
 
-function InfoRow({ term, children }: { term: string; children: React.ReactNode }) {
+function InfoRow({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
-    <div className="grid gap-2 py-6 sm:grid-cols-[8rem_1fr] sm:gap-6">
-      <dt className="text-sm font-semibold text-graphite">{term}</dt>
-      <dd className="text-[1.02rem] leading-relaxed text-ink">{children}</dd>
-    </div>
+    <li className="grid grid-cols-[2.5rem_1fr] items-start gap-4 py-5">
+      <span aria-hidden className="grid size-10 place-items-center rounded-full bg-taupe-tint text-clay">
+        {icon}
+      </span>
+      <div>
+        <p className="text-sm font-semibold text-graphite">{title}</p>
+        <div className="mt-1 text-[1.02rem] leading-relaxed text-ink">{children}</div>
+      </div>
+    </li>
   );
 }

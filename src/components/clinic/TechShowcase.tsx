@@ -4,7 +4,7 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { useId, useRef, useState } from "react";
 
-import { technologies, technologyNote } from "@/data/content";
+import { homeTechnologies as technologies, technologyNote } from "@/data/content";
 import { images } from "@/data/images";
 
 /**

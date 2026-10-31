@@ -10,6 +10,16 @@ const routes = [
   "/tratamentos/proteses",
   "/tratamentos/tratamento-de-canal",
   "/tratamentos/odontopediatria",
+  "/tratamentos/planejamento-digital-do-sorriso",
+  "/tratamentos/laserterapia",
+  "/tratamentos/enxertos",
+  "/tratamentos/extracao-de-terceiros-molares",
+  "/tratamentos/facetas-e-lentes",
+  "/tratamentos/manutencao-preventiva",
+  "/tratamentos/periodontia",
+  "/tratamentos/placas-de-bruxismo",
+  "/tratamentos/primeira-consulta",
+  "/tratamentos/protetores-esportivos",
   "/tecnologia",
   "/equipe",
   "/contato",
@@ -45,16 +55,16 @@ test.describe("rotas", () => {
 });
 
 test.describe("imagens", () => {
-  test("nenhuma foto restrita é carregada", async ({ page }) => {
-    const requested: string[] = [];
-    page.on("request", (r) => requested.push(r.url()));
-    for (const route of ["/", "/a-clinica", "/equipe", "/contato", "/tecnologia"]) {
-      await page.goto(route, { waitUntil: "networkidle" });
-    }
-    const restricted = requested.filter((u) =>
-      /atendimento-procedimento|recepcao-familia|tomografia/.test(decodeURIComponent(u)),
-    );
-    expect(restricted).toEqual([]);
+  test("fotos do site anterior aparecem nas páginas planejadas", async ({ page }) => {
+    await page.goto("/a-clinica");
+    await expect(page.getByRole("img", { name: /mãe e a filha sorriem no balcão/ })).toHaveCount(1);
+    await page.goto("/tecnologia");
+    await expect(page.getByRole("img", { name: /aparelho de tomografia/ })).toBeVisible();
+    await expect(page.getByRole("img", { name: /raio X intraoral/ })).toBeVisible();
+    await page.goto("/tratamentos/primeira-consulta");
+    await expect(page.getByRole("img", { name: /mostra informações no monitor/ })).toBeVisible();
+    await page.goto("/tratamentos/protetores-esportivos");
+    await expect(page.getByRole("img", { name: /protetor bucal azul/ })).toBeVisible();
   });
 });
 
@@ -98,7 +108,7 @@ test.describe("navegação desktop", () => {
     await page.goto("/tecnologia");
     await page.getByRole("banner").getByRole("link", { name: "Agendar avaliação" }).click();
     await expect(page).toHaveURL("/contato#agendar");
-    await expect(page.getByRole("button", { name: "Abrir e-mail de agendamento" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Continuar pelo WhatsApp/ })).toBeVisible();
   });
 });
 
@@ -160,9 +170,9 @@ test.describe("interações", () => {
     await page.goto("/a-clinica#ambientes");
     await page.getByRole("button", { name: "Ampliar foto: Sala de espera" }).click();
     const dialog = page.getByRole("dialog", { name: "Galeria de fotos da clínica" });
-    await expect(dialog.getByText("3 de 6")).toBeVisible();
+    await expect(dialog.getByText("5 de 9")).toBeVisible();
     await page.keyboard.press("ArrowRight");
-    await expect(dialog.getByText("Consultório", { exact: true })).toBeVisible();
+    await expect(dialog.getByText("Poltronas da sala de espera", { exact: true })).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
   });
@@ -193,7 +203,7 @@ test.describe("interações", () => {
     await expect(first).toHaveAttribute("aria-selected", "true");
   });
 
-  test("formulário abre o e-mail sem declarar agendamento feito", async ({ page }) => {
+  test("formulário valida os campos e abre o e-mail sem declarar agendamento feito", async ({ page }) => {
     // Registra o mailto em vez de abrir um aplicativo externo.
     await page.addInitScript(() => {
       HTMLAnchorElement.prototype.click = function () {
@@ -202,27 +212,65 @@ test.describe("interações", () => {
     });
     await page.goto("/contato");
     const form = page.locator("#agendar");
-    const submit = form.getByRole("button", { name: "Abrir e-mail de agendamento" });
+    const submit = form.getByRole("button", { name: "Enviar pelo seu e-mail" });
 
-    // Campos obrigatórios: sem nome, nada acontece.
+    // Campos obrigatórios: sem nome e WhatsApp, nada abre e os erros aparecem.
     await submit.click();
     expect(await page.evaluate(() => (window as unknown as { __mailto?: string }).__mailto)).toBeUndefined();
+    await expect(form.getByText("Informe seu nome completo.")).toBeVisible();
+    await expect(form.getByLabel("Nome completo")).toHaveAttribute("aria-invalid", "true");
+    await expect(form.getByLabel("Nome completo")).toBeFocused();
 
-    await form.getByLabel("Seu nome").fill("Maria Teste");
-    await form.getByLabel("Telefone ou e-mail para retorno").fill("(31) 90000-0000");
-    await form.getByText("Manhã", { exact: true }).click();
+    await form.getByLabel("Nome completo").fill("Maria Teste");
+    await form.getByLabel("WhatsApp").fill("3190000");
+    await submit.click();
+    await expect(form.getByText(/Confira o número/)).toBeVisible();
+    expect(await page.evaluate(() => (window as unknown as { __mailto?: string }).__mailto)).toBeUndefined();
+
+    await form.getByLabel("WhatsApp").fill("31900000000");
+    await expect(form.getByLabel("WhatsApp")).toHaveValue("(31) 90000-0000");
+    await form.getByLabel("Tratamento de interesse").selectOption("Ortodontia");
     await submit.click();
 
     const href = await page.evaluate(() => (window as unknown as { __mailto: string }).__mailto);
     expect(href.startsWith("mailto:contato@clinicadentarium.com.br?subject=Agendamento")).toBe(true);
     const body = decodeURIComponent(href.split("body=")[1]);
     expect(body).toContain("Nome: Maria Teste");
-    expect(body).toContain("Período de preferência: Manhã");
+    expect(body).toContain("WhatsApp: (31) 90000-0000");
+    expect(body).toContain("Tratamento de interesse: Ortodontia");
+    expect(body).not.toContain("Mensagem:");
 
     const status = form.getByRole("status");
     await expect(status).toContainText("Mensagem pronta no seu aplicativo de e-mail");
     await expect(status).toContainText("só fica marcado quando a recepção responder");
-    await expect(status).not.toContainText(/agendad[oa]|confirmad[oa]|enviad[oa] com sucesso/i);
+    await expect(status).not.toContainText(/agendad[oa]|confirmad[oa]|recebid[oa]|enviad[oa] com sucesso/i);
+  });
+
+  test("formulário monta a mensagem no WhatsApp sem declarar agendamento feito", async ({ page }) => {
+    await page.addInitScript(() => {
+      window.open = ((url: string) => {
+        (window as unknown as { __opened: string }).__opened = url;
+        return null;
+      }) as typeof window.open;
+    });
+    await page.goto("/contato");
+    const form = page.locator("#agendar");
+    await form.getByLabel("Nome completo").fill("Maria Teste");
+    await form.getByLabel("WhatsApp").fill("(31) 90000-0000");
+    await form.getByLabel(/Mensagem/).fill("Prefiro contato à tarde.");
+    await form.getByRole("button", { name: /Continuar pelo WhatsApp/ }).click();
+
+    const url = await page.evaluate(() => (window as unknown as { __opened: string }).__opened);
+    expect(url.startsWith("https://wa.me/5531998083126?text=")).toBe(true);
+    const text = decodeURIComponent(url.split("text=")[1]);
+    expect(text).toContain("Olá! Gostaria de solicitar uma avaliação na Clínica Dentarium.");
+    expect(text).toContain("Nome: Maria Teste");
+    expect(text).toContain("WhatsApp: (31) 90000-0000");
+    expect(text).toContain("Tratamento de interesse: Avaliação geral (ainda não sei)");
+    expect(text).toContain("Mensagem: Prefiro contato à tarde.");
+    const status = form.getByRole("status");
+    await expect(status).toContainText("Mensagem pronta no WhatsApp");
+    await expect(status).not.toContainText(/agendad[oa]|confirmad[oa]|recebid[oa]|enviad[oa] com sucesso/i);
   });
 
   test("foco visível e navegação por teclado no header", async ({ page, isMobile }) => {
@@ -231,7 +279,7 @@ test.describe("interações", () => {
     await page.keyboard.press("Tab"); // link "pular para o conteúdo"
     await expect(page.getByRole("link", { name: "Pular para o conteúdo" })).toBeFocused();
     await page.keyboard.press("Tab");
-    const logo = page.getByRole("banner").getByRole("link", { name: "Dentarium — página inicial" });
+    const logo = page.getByRole("banner").getByRole("link", { name: "Dentarium, página inicial" });
     await expect(logo).toBeFocused();
     const outline = await logo.evaluate((el) => getComputedStyle(el).outlineStyle);
     expect(outline).toBe("solid");
@@ -253,6 +301,40 @@ test.describe("interações", () => {
     await expect(page.getByRole("link", { name: /Odontopediatria/ })).toBeVisible();
   });
 
+  test("busca encontra modalidades internas pelos termos", async ({ page: fullPage }) => {
+    await fullPage.goto("/tratamentos");
+    const page = fullPage.getByRole("main");
+    const search = page.getByRole("searchbox", { name: "Buscar tratamento" });
+    await search.fill("gestante");
+    await expect(page.getByRole("link", { name: /Odontopediatria/ })).toBeVisible();
+    await search.fill("dentadura");
+    await expect(page.getByRole("link", { name: /Próteses/ })).toBeVisible();
+    await search.fill("siso");
+    await expect(page.getByRole("link", { name: /terceiros molares/ })).toBeVisible();
+  });
+
+  test("seções internas têm âncoras navegáveis", async ({ page }) => {
+    await page.goto("/tratamentos/odontopediatria#pre-natal-odontologico");
+    await expect(page.getByRole("heading", { name: "Pré-natal odontológico" })).toBeInViewport();
+    await page.goto("/tratamentos/proteses");
+    await expect(page.getByRole("heading", { name: "Mais retenção para dentaduras" })).toBeVisible();
+  });
+
+  test("etapas do CAD/CAM respondem a clique, setas e botões", async ({ page }) => {
+    await page.goto("/tecnologia");
+    const tablist = page.getByRole("tablist", { name: "Etapas do CAD/CAM" });
+    await tablist.scrollIntoViewIfNeeded();
+    const panel = page.locator("#cad-cam").getByRole("tabpanel");
+    await expect(panel).toContainText("Escaneamento");
+    await page.getByRole("button", { name: "Próxima etapa" }).click();
+    await expect(tablist.getByRole("tab", { name: /Desenho/ })).toHaveAttribute("aria-selected", "true");
+    await tablist.getByRole("tab", { name: /Desenho/ }).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(tablist.getByRole("tab", { name: /Produção/ })).toBeFocused();
+    await expect(panel).toContainText("Fabricação");
+    await expect(page.getByRole("button", { name: "Próxima etapa" })).toBeDisabled();
+  });
+
   test("cartões de tratamento levam às páginas individuais", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("link", { name: /Ortodontia[\s\S]*Saiba mais/ }).click();
@@ -260,12 +342,229 @@ test.describe("interações", () => {
     await expect(page.getByText("A indicação depende de avaliação individual com cirurgião-dentista.")).toBeVisible();
   });
 
-  test("contato usa tel:, mailto: e não ativa WhatsApp", async ({ page }) => {
+  test("contato usa WhatsApp, tel:, mailto: e mostra o horário", async ({ page }) => {
     await page.goto("/contato");
     const main = page.getByRole("main");
     await expect(main.locator('a[href="tel:+553132616991"]').first()).toBeVisible();
     await expect(main.locator('a[href^="mailto:contato@clinicadentarium.com.br"]').first()).toBeVisible();
-    await expect(page.locator('a[href*="wa.me"]')).toHaveCount(0);
+    const whatsapp = main.locator('a[href^="https://wa.me/5531998083126"]');
+    await expect(whatsapp.first()).toBeVisible();
+    await expect(whatsapp.first()).toHaveAttribute("target", "_blank");
+    const href = (await whatsapp.first().getAttribute("href"))!;
+    expect(decodeURIComponent(href.split("text=")[1])).toBe(
+      "Olá! Gostaria de saber mais sobre os atendimentos da Clínica Dentarium.",
+    );
+    await expect(main.getByText("(31) 99808-3126").first()).toBeVisible();
+    await expect(main.getByText("08h às 18h30")).toBeVisible();
+    await expect(main.getByText("Fechado")).toHaveCount(2);
+    await expect(page.getByText(/WhatsApp em breve|sendo confirmado/)).toHaveCount(0);
     await expect(main.locator('a[href^="https://www.google.com/maps"]').first()).toHaveAttribute("target", "_blank");
+  });
+});
+
+test.describe("páginas de tratamento", () => {
+  test("WhatsApp do tratamento abre com mensagem do próprio tratamento", async ({ page }) => {
+    await page.goto("/tratamentos/implantes");
+    const link = page.getByRole("link", { name: /Tirar dúvidas pelo WhatsApp/ });
+    await expect(link).toHaveAttribute("target", "_blank");
+    const href = (await link.getAttribute("href"))!;
+    expect(href.startsWith("https://wa.me/5531998083126?text=")).toBe(true);
+    expect(decodeURIComponent(href.split("text=")[1])).toBe(
+      "Olá! Gostaria de informações sobre o tratamento de implantes dentários e como agendar uma avaliação.",
+    );
+  });
+
+  test("títulos são próprios de cada tratamento", async ({ page }) => {
+    const expected: Record<string, string> = {
+      implantes: "Quando considerar um implante dentário?",
+      clareamento: "Quando procurar uma avaliação para clareamento?",
+      ortodontia: "Quais opções existem para alinhar os dentes?",
+      proteses: "Como recuperar a função e a estética do sorriso?",
+      "extracao-de-terceiros-molares": "Quando a extração dos sisos pode ser indicada?",
+    };
+    for (const [slug, heading] of Object.entries(expected)) {
+      await page.goto(`/tratamentos/${slug}`);
+      await expect(page.getByRole("heading", { level: 2, name: heading })).toBeVisible();
+      await expect(page.getByText("Quando conversar com o dentista sobre esta opção")).toHaveCount(0);
+    }
+  });
+
+  test("ortodontia apresenta alinhadores com crédito da foto e sem citar marcas", async ({ page }) => {
+    await page.goto("/tratamentos/ortodontia#alinhadores-transparentes");
+    const section = page.locator("#alinhadores-transparentes");
+    await expect(section.getByRole("heading", { level: 2 })).toBeInViewport();
+    await expect(section.getByRole("img", { name: /Alinhador ortodôntico transparente/ })).toBeVisible();
+    await expect(section).toContainText("Não representa a marca nem o produto utilizado na Dentarium");
+    await expect(section.getByRole("link", { name: /ClearCorrect, via Wikimedia Commons/ })).toHaveAttribute(
+      "href",
+      "https://commons.wikimedia.org/wiki/File:Aligner_on_Table_v2_(2).jpg",
+    );
+    await expect(section.getByRole("link", { name: "CC BY-SA 3.0" })).toHaveAttribute("href", /creativecommons\.org\/licenses\/by-sa\/3\.0/);
+    await expect(section).toContainText("pode ajustar o planejamento ao longo do tratamento");
+    await expect(page.getByRole("main")).not.toContainText(/Invisalign|material institucional/);
+  });
+
+  test("índice da ortodontia tem rótulos e âncoras únicos e funcionais", async ({ page }) => {
+    await page.goto("/tratamentos/ortodontia");
+    const nav = page.getByRole("navigation", { name: "Nesta página" });
+    const links = nav.getByRole("link");
+    const labels = await links.allTextContents();
+    const hrefs = await links.evaluateAll((as) => as.map((a) => a.getAttribute("href")!));
+    expect(new Set(labels).size).toBe(labels.length);
+    expect(new Set(hrefs).size).toBe(hrefs.length);
+    expect(labels).toContain("Tipos de aparelhos");
+    expect(labels.filter((l) => l === "Alinhadores transparentes")).toHaveLength(1);
+    for (const href of hrefs) {
+      await nav.locator(`a[href="${href}"]`).click();
+      await expect(page).toHaveURL(new RegExp(`${href}$`));
+      await expect(page.locator(href)).toHaveCount(1);
+      await expect(page.locator(href).getByRole("heading").first()).toBeInViewport();
+    }
+  });
+
+  test("cada ilustração aparece no tratamento correto", async ({ page }) => {
+    const expected: Record<string, RegExp> = {
+      implantes: /\/implante[^/]*\.jpg/,
+      proteses: /protese-fixa-dentadura[^/]*\.jpg/,
+      "facetas-e-lentes": /lentes-de-contato-de-porcelana[^/]*\.jpg/,
+      odontopediatria: /pre-natal-odontologico[^/]*\.png/,
+      "odontopediatria#dentarium-kids": /odontologia-bh-dentarium-kids[^/]*\.png/,
+      ortodontia: /aligner-on-table-v2[^/]*\.jpg/,
+    };
+    for (const [slug, file] of Object.entries(expected)) {
+      await page.goto(`/tratamentos/${slug}`);
+      const srcs = await page.locator("main img").evaluateAll((imgs) =>
+        imgs.map((i) => decodeURIComponent((i as HTMLImageElement).getAttribute("src") ?? "")),
+      );
+      expect(srcs.some((src) => file.test(src)), `${slug} deveria usar ${file}`).toBe(true);
+    }
+  });
+
+  test("imagens reservadas para revisão nunca são carregadas", async ({ page }) => {
+    const requested: string[] = [];
+    page.on("request", (r) => requested.push(decodeURIComponent(r.url())));
+    for (const slug of ["odontopediatria", "placas-de-bruxismo", "manutencao-preventiva", "clareamento"]) {
+      await page.goto(`/tratamentos/${slug}`, { waitUntil: "networkidle" });
+    }
+    const blocked = requested.filter((u) =>
+      /placas-de-bruxismo-dentarium|manutencao-preventiva[^/]*\.png|claremento-dental/.test(u),
+    );
+    expect(blocked).toEqual([]);
+  });
+
+  test("navega entre tratamentos da mesma área e pelo índice da página", async ({ page }) => {
+    await page.goto("/tratamentos/implantes");
+    const area = page.getByRole("navigation", { name: "Outros tratamentos da área" });
+    await expect(area.getByRole("link", { name: "Implantes" })).toHaveAttribute("aria-current", "page");
+    await area.getByRole("link", { name: "Próteses" }).click();
+    await expect(page).toHaveURL("/tratamentos/proteses");
+    await page.getByRole("navigation", { name: "Nesta página" }).getByRole("link", { name: "Dúvidas" }).click();
+    await expect(page).toHaveURL(/#duvidas$/);
+    await expect(page.locator("#duvidas").getByRole("heading", { level: 2 })).toBeInViewport();
+  });
+});
+
+test.describe("rolagem suave", () => {
+  test("âncoras da página rolam suave e links para seções de outra página chegam à seção", async ({ page }) => {
+    await page.goto("/tratamentos/ortodontia");
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("smooth");
+    await page.getByRole("navigation", { name: "Nesta página" }).getByRole("link", { name: "Dúvidas" }).click();
+    // Logo após o clique a página ainda está a caminho da seção.
+    const mid = await page.evaluate(() => new Promise<number>((r) => setTimeout(() => r(scrollY), 60)));
+    await expect(page.locator("#duvidas").getByRole("heading", { level: 2 })).toBeInViewport();
+    const end = await page.evaluate(() => scrollY);
+    expect(mid).toBeGreaterThan(0);
+    expect(mid).toBeLessThan(end);
+
+    await page.goto("/");
+    await page.getByRole("region", { name: "Agende uma avaliação." }).getByRole("link", { name: "Agendar avaliação" }).click();
+    await expect(page).toHaveURL("/contato#agendar");
+    await expect(page.locator("#agendar").getByRole("heading", { name: "Solicite sua avaliação" })).toBeInViewport();
+  });
+});
+
+test.describe("convênios", () => {
+  test("contato mostra os convênios entre o formulário e o mapa", async ({ page }) => {
+    await page.goto("/contato");
+    const section = page.getByRole("region", { name: "Convênios atendidos" });
+    for (const name of [/Agros/, /OdontoVida/, /Coopeder/]) {
+      const img = section.getByRole("img", { name });
+      await img.scrollIntoViewIfNeeded();
+      await expect(img).toBeVisible();
+      expect(await img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+    }
+    const order = await page.evaluate(() =>
+      ["#agendar", "#convenios-title", "#como-chegar"].map((s) => document.querySelector(s)!.getBoundingClientRect().top),
+    );
+    expect(order[0]).toBeLessThan(order[1]);
+    expect(order[1]).toBeLessThan(order[2]);
+    await page.goto("/");
+    await expect(page.getByRole("region", { name: "Convênios atendidos" })).toHaveCount(0);
+  });
+});
+
+test.describe("logo", () => {
+  test("leva ao início e, já na home, volta ao topo", async ({ page, isMobile }) => {
+    await page.goto("/equipe");
+    await page.getByRole("banner").getByRole("link", { name: "Dentarium, página inicial" }).click();
+    await expect(page).toHaveURL("/");
+
+    await page.evaluate(() => window.scrollTo({ top: 3000, behavior: "instant" }));
+    await page.getByRole("banner").getByRole("link", { name: "Dentarium, página inicial" }).click();
+    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+
+    if (isMobile) {
+      await page.goto("/tecnologia");
+      await page.getByRole("button", { name: "Abrir menu" }).click();
+      const dialog = page.getByRole("dialog", { name: "Menu" });
+      await dialog.getByRole("link", { name: "Dentarium, página inicial" }).click();
+      await expect(page).toHaveURL("/");
+      await expect(dialog).toBeHidden();
+    }
+  });
+});
+
+test.describe("localização", () => {
+  test("home mantém o bloco de contato com a fachada e não tem mapa", async ({ page }) => {
+    await page.goto("/");
+    const contact = page.getByRole("region", { name: "Agende uma avaliação." });
+    await expect(contact.locator("img")).toHaveCount(1);
+    await expect(contact.getByRole("link", { name: "Agendar avaliação" })).toHaveAttribute("href", "/contato#agendar");
+    const rotas = contact.getByRole("link", { name: "Ver rotas" });
+    await expect(rotas).toHaveAttribute("target", "_blank");
+    await expect(rotas).toHaveAttribute("href", /^https:\/\/www\.google\.com\/maps\//);
+    await expect(page.getByRole("region", { name: /Como chegar|Estamos esperando/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Mostrar mapa interativo" })).toHaveCount(0);
+  });
+
+  test("mapa do contato só carrega do Google depois do clique e aponta para a clínica", async ({ page }) => {
+    const google: string[] = [];
+    page.on("request", (r) => {
+      if (/google\.com\/maps|gstatic|googleapis/.test(r.url())) google.push(r.url());
+    });
+    await page.goto("/contato", { waitUntil: "networkidle" });
+    const section = page.getByRole("region", { name: "Como chegar à Dentarium" });
+    await section.scrollIntoViewIfNeeded();
+    await expect(section).toContainText("Rua do Ouro, 857 — Serra, Belo Horizonte/MG");
+    await expect(section.locator("iframe")).toHaveCount(0);
+    expect(google).toEqual([]);
+
+    const rotas = section.getByRole("link", { name: /Ver rotas no Google Maps/ });
+    await expect(rotas).toHaveAttribute("target", "_blank");
+    const href = (await rotas.getAttribute("href"))!;
+    expect(href.startsWith("https://www.google.com/maps/dir/?api=1&destination=")).toBe(true);
+    expect(decodeURIComponent(href)).toContain("Dentarium, R. do Ouro, 857 - Serra, Belo Horizonte - MG");
+    await expect(section.getByRole("link", { name: /Abrir a ficha no Google Maps/ })).toHaveAttribute(
+      "href",
+      /google\.com\/maps\/place\/Dentarium\/.*0xa699be9f59bc37:0xe0a2f87764437ea3/,
+    );
+
+    await section.getByRole("button", { name: "Mostrar mapa interativo" }).click();
+    const frame = section.locator("iframe");
+    await expect(frame).toHaveAttribute("src", /^https:\/\/www\.google\.com\/maps\/embed\?pb=.*0xa699be9f59bc37%3A0xe0a2f87764437ea3.*Dentarium/);
+    await expect(frame).toHaveAttribute("title", /Clínica Dentarium/);
+    const box = (await frame.boundingBox())!;
+    expect(box.width).toBeGreaterThan(280);
+    expect(box.height).toBeGreaterThan(280);
   });
 });

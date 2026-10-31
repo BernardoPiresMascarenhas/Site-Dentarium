@@ -46,7 +46,7 @@ export function About() {
               as outras.
             </p>
             <p>
-              Da sala de espera aos consultórios, os ambientes são claros e organizados — um lugar
+              Da sala de espera aos consultórios, os ambientes são claros e organizados: um lugar
               para conversar com calma sobre o seu tratamento.
             </p>
           </div>

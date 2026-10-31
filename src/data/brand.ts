@@ -25,7 +25,7 @@ export type BrandLogo = {
 
 export const logo: BrandLogo = {
   src: logoFile,
-  alt: "Dentarium — Odontologia funcional e estética",
+  alt: "Dentarium, odontologia funcional e estética",
   ratio: logoFile.width / logoFile.height,
   status: logoFile.src.endsWith(".svg")
     ? "official-vector"

@@ -26,7 +26,8 @@ export function TreatmentExplorer() {
     return treatments.filter((t) => {
       if (filter !== "todos" && t.category !== filter) return false;
       if (!q) return true;
-      return normalize(`${t.name} ${t.alsoKnownAs ?? ""} ${t.summary}`).includes(q);
+      const extra = [...(t.keywords ?? []), ...(t.details ?? []).map((d) => d.title)].join(" ");
+      return normalize(`${t.name} ${t.alsoKnownAs ?? ""} ${t.summary} ${extra}`).includes(q);
     });
   }, [filter, query]);
 

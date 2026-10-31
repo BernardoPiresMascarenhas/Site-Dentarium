@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
 import {
   SCHEDULE_SUBJECT,
@@ -8,6 +8,7 @@ import {
   mailtoHref,
   mapsUrl,
   telHref,
+  whatsappHref,
 } from "@/data/clinic";
 import { images } from "@/data/images";
 import { ButtonAnchor, ButtonLink } from "@/components/ui/Button";
@@ -24,14 +25,20 @@ export function ContactBlock({ withPageLink = true }: { withPageLink?: boolean }
             Agende uma avaliação.
           </h2>
           <p className="prose-body mt-6 max-w-[30rem]">
-            Ligue para a recepção ou envie um e-mail. Vamos combinar o melhor horário para a sua
-            primeira consulta.
+            Escreva pelo WhatsApp, ligue para a recepção ou envie um e-mail. Vamos combinar o melhor
+            horário para a sua primeira consulta.
           </p>
 
           <ul className="mt-10 space-y-6">
             <ContactRow icon={<MapPin className="size-[1.1rem]" />} title="Endereço">
               <a href={mapsUrl()} target="_blank" rel="noopener noreferrer" className="link-underline">
                 {fullAddress()}
+              </a>
+            </ContactRow>
+            <ContactRow icon={<MessageCircle className="size-[1.1rem]" />} title="WhatsApp">
+              <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="link-underline">
+                {clinic.whatsapp.value.display}
+                <span className="sr-only"> (abre em nova aba)</span>
               </a>
             </ContactRow>
             <ContactRow icon={<Phone className="size-[1.1rem]" />} title="Telefones">

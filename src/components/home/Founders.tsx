@@ -1,3 +1,4 @@
+import { history } from "@/data/content";
 import { images } from "@/data/images";
 import { founders } from "@/data/team";
 import { ArchImage } from "@/components/ui/ArchImage";
@@ -28,7 +29,7 @@ export function Founders({ withPhoto = false }: { withPhoto?: boolean }) {
         )}
 
         <div className={withPhoto ? "max-w-[36rem]" : ""}>
-          {withPhoto && <FoundersIntro />}
+          {withPhoto && <FoundersIntro withHistory />}
           <ul className={`grid gap-4 sm:grid-cols-2 ${withPhoto ? "mt-9" : ""}`}>
             {founders.map((m) => (
               <li
@@ -40,7 +41,12 @@ export function Founders({ withPhoto = false }: { withPhoto?: boolean }) {
                 <p className="mt-4 font-serif text-[1.65rem] leading-[1.15] text-balance text-ink sm:text-[1.8rem]">
                   {m.name}
                 </p>
-                <p className="mt-6 border-t border-taupe-soft pt-4 text-sm text-stone tabular-nums">
+                <ul className="mt-5 space-y-1 text-[0.88rem] leading-snug text-stone">
+                  {m.credentials.map((c) => (
+                    <li key={c}>{c}</li>
+                  ))}
+                </ul>
+                <p className="mt-5 border-t border-taupe-soft pt-4 text-sm text-stone tabular-nums">
                   CRO {m.cro}
                 </p>
               </li>
@@ -52,17 +58,25 @@ export function Founders({ withPhoto = false }: { withPhoto?: boolean }) {
   );
 }
 
-function FoundersIntro() {
+function FoundersIntro({ withHistory = false }: { withHistory?: boolean }) {
   return (
     <>
-      <p className="kicker">Fundadores</p>
+      <p className="kicker">{withHistory ? "Nossa história" : "Fundadores"}</p>
       <h2 id="fundadores-title" className="display-lg mt-5">
-        Quem fundou a Dentarium.
+        {withHistory ? history.title : "Quem fundou a Dentarium."}
       </h2>
-      <p className="prose-body mt-6">
-        A Dentarium foi fundada por dois cirurgiões-dentistas. Ao lado, seus nomes e registros
-        profissionais, conforme divulgados pela clínica.
-      </p>
+      {withHistory ? (
+        <div className="prose-body mt-6 space-y-4">
+          {history.paragraphs.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </div>
+      ) : (
+        <p className="prose-body mt-6">
+          A Dentarium nasceu da união profissional de dois cirurgiões-dentistas, com a inovação como
+          um dos pilares da clínica.
+        </p>
+      )}
       <ButtonLink href="/equipe" variant="ghost" className="mt-7">
         Conheça a equipe
       </ButtonLink>

@@ -1,3 +1,9 @@
+/**
+ * Endereço público usado no sitemap. Enquanto não houver domínio oficial,
+ * vale a URL de demonstração; defina NEXT_PUBLIC_SITE_URL na versão autorizada.
+ */
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://site-dentarium.vercel.app").replace(/\/$/, "");
+
 export type NavItem = { href: string; label: string };
 
 export const mainNav: NavItem[] = [

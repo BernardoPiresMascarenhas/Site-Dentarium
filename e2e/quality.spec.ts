@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const routes = ["/", "/a-clinica", "/tratamentos", "/tratamentos/implantes", "/tecnologia", "/equipe", "/contato", "/privacidade"];
+const routes = ["/", "/a-clinica", "/tratamentos", "/tratamentos/implantes", "/tratamentos/odontopediatria", "/tratamentos/ortodontia", "/tratamentos/extracao-de-terceiros-molares", "/tecnologia", "/equipe", "/contato", "/privacidade"];
 
 test.describe("acessibilidade (axe)", () => {
   for (const route of routes) {
@@ -10,12 +10,25 @@ test.describe("acessibilidade (axe)", () => {
       // Garante que as animações de entrada terminaram antes de medir contraste.
       await page.evaluate(async () => {
         for (let y = 0; y < document.body.scrollHeight; y += 600) {
-          window.scrollTo(0, y);
+          window.scrollTo({ top: y, behavior: "instant" });
           await new Promise((r) => setTimeout(r, 40));
         }
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: "instant" });
       });
-      await page.waitForTimeout(1200);
+      // Sob carga (testes em paralelo), a entrada pode passar de 1,2 s: espera
+      // até nenhum bloco animado estar no meio do fade (opacidade entre 0 e 1).
+      await page
+        .waitForFunction(
+          () =>
+            ![...document.querySelectorAll<HTMLElement>('[style*="opacity"]')].some((el) => {
+              const o = parseFloat(getComputedStyle(el).opacity);
+              return o > 0 && o < 1;
+            }),
+          undefined,
+          { timeout: 8000 },
+        )
+        .catch(() => {});
+      await page.waitForTimeout(300);
       const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
       const serious = results.violations
         .filter((v) => v.impact === "serious" || v.impact === "critical")
@@ -63,7 +76,7 @@ test.describe("fotografias", () => {
       // Força o carregamento das imagens lazy.
       await page.evaluate(async () => {
         for (let y = 0; y < document.body.scrollHeight; y += 500) {
-          window.scrollTo(0, y);
+          window.scrollTo({ top: y, behavior: "instant" });
           await new Promise((r) => setTimeout(r, 40));
         }
       });
@@ -88,7 +101,9 @@ test.describe("fotografias", () => {
     expect(home.some((a) => a.startsWith("Gabriel"))).toBe(false);
 
     const equipe = await alts("/equipe");
-    expect(equipe.filter((a) => a.startsWith("Gabriel Faria Aiala"))).toHaveLength(1);
+    for (const name of ["Dr. Gabriel Faria Aiala", "Dra. Denise Ligório Fialho Aiala", "Dra. Fernanda de Paula T. Bastos"]) {
+      expect(equipe.filter((a) => a.startsWith(name))).toHaveLength(1);
+    }
     expect(equipe.some((a) => a.startsWith("Os fundadores"))).toBe(false);
 
     const clinica = await alts("/a-clinica");

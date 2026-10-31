@@ -8,7 +8,7 @@ import { TreatmentExplorer } from "@/components/treatments/TreatmentExplorer";
 export const metadata: Metadata = {
   title: "Tratamentos",
   description:
-    "Implantes, ortodontia, clareamento, próteses, tratamento de canal, odontopediatria e outros tratamentos da Clínica Dentarium, em Belo Horizonte.",
+    "Implantes, próteses, enxertos, ortodontia, clareamento, facetas, planejamento digital do sorriso, tratamento de canal, laserterapia, odontopediatria e outros tratamentos da Clínica Dentarium, em Belo Horizonte.",
 };
 
 export default function TreatmentsPage() {

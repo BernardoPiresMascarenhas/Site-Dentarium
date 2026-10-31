@@ -3,8 +3,10 @@ import { Manrope, Newsreader } from "next/font/google";
 
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { HashScroll } from "@/components/layout/HashScroll";
 import { MotionProvider } from "@/components/ui/MotionProvider";
 import { clinic } from "@/data/clinic";
+import { siteUrl } from "@/data/navigation";
 import "./globals.css";
 
 const newsreader = Newsreader({
@@ -21,15 +23,17 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: `${clinic.name} — ${clinic.tagline} em Belo Horizonte`,
-    template: `%s — ${clinic.name}`,
+    default: `${clinic.name} | ${clinic.tagline} em Belo Horizonte`,
+    template: `%s | ${clinic.name}`,
   },
   description:
     "Estudo conceitual de redesign para a Clínica Dentarium, odontologia funcional e estética no bairro Serra, em Belo Horizonte.",
   // Demonstração: não indexar para não ser confundida com o site oficial.
   robots: { index: false, follow: false, nocache: true },
   applicationName: clinic.name,
+  openGraph: { type: "website", locale: "pt_BR", siteName: clinic.name },
 };
 
 export const viewport: Viewport = {
@@ -38,7 +42,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${newsreader.variable} ${manrope.variable} antialiased`}>
+    <html lang="pt-BR" data-scroll-behavior="smooth" className={`${newsreader.variable} ${manrope.variable} antialiased`}>
       <body className="flex min-h-svh flex-col">
         <a
           href="#conteudo"
@@ -48,6 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <MotionProvider>
           <Header />
+          <HashScroll />
           <main id="conteudo" className="flex-1">
             {children}
           </main>

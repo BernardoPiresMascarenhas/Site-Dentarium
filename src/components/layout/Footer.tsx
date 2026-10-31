@@ -7,6 +7,7 @@ import {
   mailtoHref,
   mapsUrl,
   telHref,
+  whatsappHref,
 } from "@/data/clinic";
 import { legalNav, mainNav, scheduleCta } from "@/data/navigation";
 import { featuredTreatments } from "@/data/treatments";
@@ -19,7 +20,7 @@ export function Footer() {
       <div className="container-site pt-20 pb-10">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr]">
           <div className="max-w-xs">
-            <Link href="/" aria-label="Dentarium — página inicial" className="-ml-1 inline-block rounded-sm">
+            <Link href="/" aria-label="Dentarium, página inicial" className="-ml-1 inline-block rounded-sm">
               <Logo className="h-12 sm:h-14" />
             </Link>
             <p className="mt-6 text-[0.95rem] leading-relaxed text-stone">
@@ -64,6 +65,12 @@ export function Footer() {
                 {fullAddress()}
               </a>
             </li>
+            <li>
+              <a href={whatsappHref()} target="_blank" rel="noopener noreferrer" className="footer-link">
+                WhatsApp {clinic.whatsapp.value.display}
+                <span className="sr-only"> (abre em nova aba)</span>
+              </a>
+            </li>
             {clinic.phones.value.map((p) => (
               <li key={p.e164}>
                 <a href={telHref(p)} className="footer-link">
@@ -78,6 +85,8 @@ export function Footer() {
             </li>
             <li className="text-stone">
               {clinic.hours.value}
+              <br />
+              Sábado e domingo: fechado
             </li>
           </FooterColumn>
         </div>

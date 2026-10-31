@@ -100,7 +100,7 @@ export function ReviewCard({ review, position, total, expanded, onToggle, ref, c
             className="text-sm font-semibold text-clay underline decoration-taupe-soft underline-offset-[5px] transition-colors hover:decoration-clay"
           >
             {expanded ? "Ler menos" : "Ler mais"}
-            <span className="sr-only"> — avaliação de {review.author}</span>
+            <span className="sr-only">, avaliação de {review.author}</span>
           </button>
         )}
       </div>

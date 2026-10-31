@@ -4,10 +4,12 @@ Este site é um **estudo conceitual de redesign**, independente, e não o site o
 
 Os dados ficam centralizados em `src/data/`. Cada dado institucional tem um `status` (`public-site-unconfirmed`, `confirmed` ou `placeholder`). **Esta lista é o controle interno das pendências**: a interface do visitante não exibe marcadores "a confirmar".
 
-Para não afirmar o que não foi confirmado, a interface já:
-- **não exibe** itens de estrutura que dependem de equipamento (laboratório de próteses, exames de imagem no local), marcados com `equipment: true` em `src/data/clinic.ts`;
+A conferência completa com o conteúdo do site oficial anterior (`info-dentarium.pdf`), incluindo todas as afirmações que ficaram de fora por falta de comprovação, está em **`docs/REVISAO_CONTEUDO_DENTARIUM.md`**.
+
+Para não afirmar o que não foi confirmado, a interface:
+- exibe laboratório de prótese e sala de radiografia/tomografia porque constam do material da clínica (e a sala aparece em foto), mas eles seguem marcados com `equipment: true` em `src/data/clinic.ts` e **precisam de confirmação**;
 - apresenta os recursos de tecnologia como **explicação do que cada recurso é**, com a nota "A disponibilidade de cada recurso e a indicação para o seu caso são definidas na avaliação.";
-- **não exibe função** para Fernanda de Paula T. Bastos (só nome e registro), porque nenhuma função foi divulgada.
+- apresenta Fernanda de Paula T. Bastos com a área divulgada (odontopediatria), **sem** identificá-la como fundadora.
 
 ## 1. Autorizações e direitos
 
@@ -15,25 +17,33 @@ Para não afirmar o que não foi confirmado, a interface já:
 - [ ] Licença de uso de todas as fotografias do kit (autoria e direitos).
 - [ ] Autorização de imagem dos dois profissionais retratados em `fundadores.webp`.
 - [ ] Confirmar se as fotos dos ambientes representam o espaço atual (e a data delas).
+- [ ] Licença das ilustrações do site anterior usadas nos tratamentos: `implante.jpg`, `protese-fixa-dentadura.jpg`, `lentes-de-contato-de-porcelana.jpg`, `pre-natal-odontologico.png`.
+- [ ] **Autorização dos responsáveis legais** pela criança de `odontologia-bh-dentarium-kids.png` (publicada em Odontopediatria a pedido do responsável pelo projeto) e conferência com as regras de publicidade do CFO.
+- [ ] Confirmar com a clínica os convênios atendidos hoje (Agros, OdontoVida e Coopeder, exibidos em `/contato`; lista em `src/data/healthPlans.ts`) e a autorização de uso das logomarcas.
+- [ ] Arquivar a cópia das autorizações de uso de imagem das fotos do site anterior com pessoas retratadas, publicadas em 2026-10-31 com autorização informada pelo responsável pelo projeto (ver seção 3).
+- [ ] Manter o crédito CC BY-SA 3.0 da foto do alinhador (ClearCorrect, Wikimedia Commons) enquanto ela for usada.
+- [ ] Alinhadores: confirmar se a clínica oferece hoje e qual marca/sistema (Invisalign é citado no material antigo; a foto ClearCorrect é só ilustrativa). Nenhuma marca é citada publicamente até a confirmação.
 
 ## 2. Fotografias com tratamento digital (em uso, demonstrativas)
 
 | Arquivo | Onde | Pendência |
 |---|---|---|
 | `hero-equipe-dentarium.png` | Hero da home | Tratada por IA a partir de material da clínica. Aprovação de fidelidade e de uso pelos dois retratados. |
-| `profissional-dentarium.png` | Página Equipe | Tratada por IA. Aprovação do retratado. Associada a **Gabriel Faria Aiala** por evidência visual: é o mesmo profissional que, em `fundadores.webp`, veste jaleco bordado "…riel Aiala" (a fundadora veste "Dra. Denise Fialho"). **Confirmar a identificação com a clínica.** |
+| `profissional-dentarium.png` | **Não usada** | Substituída pelos retratos individuais `gabriel.png`, `denise.png` e `fernanda.png`. Arquivo mantido. |
 
 As duas imagens estão marcadas com `aiTreated: true` em `src/data/images.ts`. O arquivo `hero-equipe-dentarium.png` tem uma coluna escura de 1 px na borda direita (artefato de exportação). Ela é recortada na exibição, sem alterar o arquivo; numa nova exportação, vale corrigir na origem.
 
-## 3. Fotografias restritas (não usadas no site)
+## 3. Fotografias com pessoas retratadas (publicadas com autorização informada)
 
-| Arquivo | Situação | Motivo |
+Vieram do site anterior da clínica. Em 2026-10-31, o responsável pelo projeto informou que todas têm autorização de uso de imagem, e elas passaram a ser publicadas. Vale arquivar a cópia das autorizações.
+
+| Arquivo | Onde | Observação |
 |---|---|---|
-| `recepcao-familia.webp` | Pendente | Pessoas identificáveis, incluindo uma criança. Exige autorização expressa dos retratados e do responsável legal. |
-| `tomografia.webp` | Pendente | Além do profissional, mostra um **paciente identificável** dentro do equipamento. Só pode ir para a página Tecnologia com autorização do paciente e revisão ética. |
-| `atendimento-procedimento.png` e `.webp` | **Não publicar** | Procedimento em andamento com paciente identificável (Resolução CFO 196/2019). |
-
-Esses arquivos continuam em `public/images/dentarium/` só como referência. Nenhum componente os importa, e isso é verificado por testes (`src/data/data.test.ts` e `e2e/site.spec.ts`). Se os arquivos forem publicados na pasta `public/` de um servidor, ficam acessíveis por URL direta, então devem ser **removidos da pasta antes do deploy**.
+| `recepcao-familia.webp` | `/a-clinica`, capítulo "Recepção" do tour | Inclui uma criança: a autorização precisa ser do responsável legal. |
+| `tomografia.webp` | `/tecnologia`, grupo "Enxergar" | Paciente identificável no equipamento. Substituiu `sala-de-radiografia-dentarium-300x240.png`, que deixou de ser usada. |
+| `atendimento-procedimento.webp` | `/tecnologia`, grupo "Executar com conforto" | Procedimento com paciente identificável: conferir também as regras de publicidade do CFO (Resolução CFO 196/2019). O `.png` do mesmo arquivo não é usado. |
+| `primeira-consulta.png` | `/tratamentos/primeira-consulta` | Substituiu `consultorio.png` nessa página (a foto segue em `/a-clinica`). |
+| `odontologia-bh-protetor-bucal-esportivo.png` | `/tratamentos/protetores-esportivos` | Ao lado do bloco "O que um bom protetor precisa ter". |
 
 ## 4. Identidade visual
 
@@ -47,25 +57,27 @@ Esses arquivos continuam em `public/images/dentarium/` só como referência. Nen
 - [ ] Endereço: Rua do Ouro, 857 — Serra, Belo Horizonte/MG.
 - [ ] Telefones: (31) 3261-6991 e (31) 3785-3126.
 - [ ] E-mail: contato@clinicadentarium.com.br.
-- [ ] Horário: segunda a sexta, 8h às 18h30.
-- [ ] **WhatsApp**: o site anterior mostra `(31) 9808-3126` no cabeçalho e `(31) 99808-3126` no rodapé. Nenhum link `wa.me` é gerado enquanto `whatsappVerified` for `null`. Depois de confirmar, preencha esse campo e o link aparece automaticamente na página de contato.
-- [ ] Estrutura exibida: estacionamento próprio, plataforma elevatória, sala de espera, consultórios.
-- [ ] Estrutura oculta até confirmação: laboratório de próteses e exames de imagem no local (ao confirmar, remova `equipment: true`).
+- [x] Horário: segunda a sexta, 08h às 18h30; sábado e domingo fechados (informado pelo responsável pelo projeto em 30/10/2026).
+- [x] **WhatsApp**: (31) 99808-3126, `https://wa.me/5531998083126` (informado em 30/10/2026). Mensagens prontas por contexto em `clinic.ts` e `treatmentWhatsappMessage()`.
+- [ ] Estrutura exibida: estacionamento próprio, plataforma elevatória, sala de espera, consultórios, apoio clínico.
+- [ ] Estrutura com equipamento, exibida e a confirmar: sala de radiografia e tomografia, laboratório de prótese (`equipment: true`).
 
 ## 6. Equipe (`src/data/team.ts`)
 
 - [ ] Denise Ligório Fialho Aiala, CRO 35.195: situação da inscrição.
 - [ ] Gabriel Faria Aiala, CRO 33.950: situação da inscrição.
-- [ ] Fernanda de Paula T. Bastos, CRO 24533: vínculo atual e dados.
+- [ ] Fernanda de Paula T. Bastos, CRO 24.533: vínculo atual, dados e título de especialista em odontopediatria.
+- [ ] Formações exibidas na página Equipe (conforme o site anterior) e autorização de uso dos três retratos individuais.
 - [ ] Informar a UF dos registros (CRO-MG?) e a categoria profissional, se aplicável.
 - [ ] **Responsável técnico** da pessoa jurídica e seu registro (exigência de publicidade odontológica).
-- [ ] Não individualizar os profissionais da foto coletiva sem identificação explícita.
+- [ ] Não individualizar os profissionais da foto coletiva sem identificação explícita (os retratos individuais da página Equipe vieram em arquivos próprios, nomeados pela clínica).
 
 ## 7. Conteúdo clínico (`src/data/treatments.ts`, `src/data/content.ts`)
 
 - [ ] Revisão de todos os textos de tratamento pelo responsável técnico.
 - [ ] Confirmar quais tratamentos continuam sendo oferecidos (inclusive Dentarium Kids).
-- [ ] Confirmar a disponibilidade de CAD/CAM, radiografia digital, tomografia, anestesia computadorizada e laser.
+- [ ] Confirmar a disponibilidade de CAD/CAM, radiografia, tomografia, anestesia computadorizada, laser e localizador apical.
+- [ ] Validar ou descartar as afirmações antigas listadas em `docs/REVISAO_CONTEUDO_DENTARIUM.md` §5 (ISO 9002, "1% das clínicas", "indolor", prazos, durabilidade).
 - [ ] Conferir a conformidade com a Resolução CFO 196/2019, o Código de Ética Odontológica e as orientações do CRO-MG:
   - https://website.cfo.org.br/resolucao-cfo-196-2019/
   - https://website.cfo.org.br/redes-sociais-na-odontologia-fique-atento-as-normas-eticas-e-acerte-na-publicacao-dos-conteudos/
